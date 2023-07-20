@@ -13,5 +13,6 @@ public class Main extends HttpServlet {
     public void service(ServletRequest req, ServletResponse res)
             throws ServletException, IOException {
         res.getWriter().println("Crazy " + java.time.LocalDateTime.now());
+        DB.test();
     }
 }
