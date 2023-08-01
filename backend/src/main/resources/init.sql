@@ -1,0 +1,68 @@
+CREATE TABLE User (
+  userId INT PRIMARY KEY,
+  firstName VARCHAR(50),
+  lastName VARCHAR(50),
+  email VARCHAR(100),
+  password VARCHAR(20),
+  address VARCHAR(200)
+);
+
+CREATE TABLE Product (
+  productId INT PRIMARY KEY,
+  name VARCHAR(100),
+  description VARCHAR(500),
+  category VARCHAR(50),
+  brand VARCHAR(50),
+  price DECIMAL(10, 2),
+  quantity INT
+);
+
+CREATE TABLE Order (
+  orderId INT PRIMARY KEY,
+  userId INT,
+  orderDate DATE,
+  totalAmount DECIMAL(10, 2),
+  FOREIGN KEY (userId) REFERENCES User(userId)
+);
+
+CREATE TABLE OrderItem (
+  orderItemId INT PRIMARY KEY,
+  orderId INT,
+  productId INT,
+  quantity INT,
+  amount DECIMAL(10, 2),
+  FOREIGN KEY (orderId) REFERENCES Order(orderId),
+  FOREIGN KEY (productId) REFERENCES Product(productId)
+);
+
+------------- Dummy Data -------------
+
+-- Sample users
+INSERT INTO User (userId, firstName, lastName, email, password, address)
+VALUES
+  (1, 'John', 'Doe', 'john@example.com', 'password123', '123 Main St, City, State 12345'),
+  (2, 'Jane', 'Doe', 'jane@example.com', 'password456', '456 Park Ave, City, State 12345'),
+  (3, 'Bob', 'Smith', 'bob@example.com', 'password789', '789 Elm St, City, State 12345');
+
+-- Sample products
+INSERT INTO Product (productId, name, description, category, brand, price, quantity)
+VALUES
+  (1, 'Product 1', 'Description 1', 'Category 1', 'Brand 1', 19.99, 5),
+  (2, 'Product 2', 'Description 2', 'Category 2', 'Brand 2', 29.99, 10),
+  (3, 'Product 3', 'Description 3', 'Category 3', 'Brand 3', 39.99, 2);
+
+-- Sample orders
+INSERT INTO "Order" (orderId, userId, orderDate, totalAmount)
+VALUES
+  (1, 1, '2023-02-01', 149.97),
+  (2, 2, '2023-02-05', 399.93),
+  (3, 3, '2023-02-08', 29.99);
+
+-- Sample order items
+INSERT INTO OrderItem (orderItemId, orderId, productId, quantity, amount)
+VALUES
+  (1, 1, 1, 2, 39.98),
+  (2, 1, 2, 1, 29.99),
+  (3, 2, 1, 3, 59.97),
+  (4, 2, 3, 2, 79.98),
+  (5, 3, 2, 1, 29.99);
