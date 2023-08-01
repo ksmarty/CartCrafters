@@ -10,7 +10,6 @@ CartCrafters is a project developed as part of the EECS 4413 course. Our primary
 ### Prerequisites
 Make sure the following are installed on your local development machine:
 - Java Development Kit (JDK)
-- Apache Tomcat Server
 
 ### Setup
 1. Clone this repository to your local machine using `https://github.com/ksmarty/CartCrafters.git`.
