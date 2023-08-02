@@ -16,7 +16,7 @@ Ensure you have the following installed on your local development machine:
 2. Import the project into your preferred IDE.
 3. Install the recommended extensions for your IDE.
 4. Run the Dev configuration.
-5. Navigate to `http://localhost:8080/eecs4413-project/` in your web browser to access the application.
+5. Navigate to `http://localhost:8080/` or `http://localhost:8080/eecs4413-project/` in your web browser to access the application.
 
 ## Contribution
 We welcome contributions from anyone. You can contribute in different ways such as creating new features, fixing bugs, improving documentation and examples, translating etc.

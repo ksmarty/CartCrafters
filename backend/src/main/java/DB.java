@@ -8,7 +8,6 @@ import javax.servlet.ServletContextEvent;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 import static org.javalite.activejdbc.Base.withDb;
