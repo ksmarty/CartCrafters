@@ -12,7 +12,7 @@ public class Setup implements ServletContextListener {
         System.out.println("Starting!");
 
         try {
-            DB.init();
+            DB.init(event);
         } catch (SQLException | SqlToolError | IOException e) {
             e.printStackTrace();
         }

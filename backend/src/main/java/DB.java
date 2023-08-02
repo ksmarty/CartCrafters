@@ -4,6 +4,7 @@ import org.hsqldb.cmdline.SqlToolError;
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.javalite.activejdbc.connection_config.ConnectionJdbcConfig;
 
+import javax.servlet.ServletContextEvent;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -17,17 +18,15 @@ public class DB {
 
     static JDBCDataSource dataSource;
 
-    public static void init() throws SQLException, SqlToolError, IOException {
+    public static void init(ServletContextEvent event) throws SQLException, SqlToolError, IOException {
         // Prevent re-initialization
         if (dataSource != null) return;
 
         dataSource = new JDBCDataSource();
         dataSource.setUrl(DB_URL);
 
-        Statement stmt = dataSource.getConnection().createStatement();
-
         // Load initial from file
-        SqlFile sf = new SqlFile(new File("resources/init.sql"));
+        SqlFile sf = new SqlFile(new File(event.getServletContext().getRealPath("/resources/init.sql")));
         sf.setConnection(dataSource.getConnection());
         sf.execute();
 
@@ -35,18 +34,12 @@ public class DB {
         ConnectionJdbcConfig conf = new ConnectionJdbcConfig("org.hsqldb.jdbcDriver", DB_URL, null);
         conf.setEnvironment("development");
         org.javalite.activejdbc.connection_config.DBConfiguration.addConnectionConfig(conf);
-
-
-        withDb(() -> {
-            new User().set("name", "Steve Johnson").saveIt();
-            return null;
-        });
     }
 
     public static void test() {
         int x = withDb(() -> {
             List<User> users = User.findAll();
-            for (User user : users) System.out.println(user.get("id") + ": " + user.get("name"));
+            for (User user : users) System.out.println(user.get("userId") + ": " + user.get("firstName"));
             return users.size();
         });
         System.out.println("Entries: " + x);
