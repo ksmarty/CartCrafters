@@ -1,3 +1,6 @@
+package controller;
+
+import db.RootDB;
 import org.hsqldb.cmdline.SqlToolError;
 
 import java.io.IOException;
@@ -12,7 +15,7 @@ public class Setup implements ServletContextListener {
         System.out.println("Starting!");
 
         try {
-            DB.init(event);
+            RootDB.init(event.getServletContext());
         } catch (SQLException | SqlToolError | IOException e) {
             e.printStackTrace();
         }
