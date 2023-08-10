@@ -1,28 +1,91 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Dev" type="com.poratu.idea.plugins.tomcat">
-    <predefined_log_file enabled="true" id="Tomcat Localhost Log" />
-    <predefined_log_file enabled="true" id="Tomcat Access Log" />
-    <predefined_log_file id="Tomcat Catalina Log" />
-    <predefined_log_file id="Tomcat Manager Log" />
-    <predefined_log_file id="Tomcat Host Manager Log" />
-    <option name="contextPath" value="/" />
-    <option name="docBase" value="$PROJECT_DIR$/src/main/webapp" />
-    <option name="envOptions">
-      <map />
-    </option>
-    <option name="extraClassPath" value="" />
-    <option name="tomcatInfo">
-      <TomcatInfo>
-        <option name="name" value="Apache Tomcat/9.0.78" />
-        <option name="path" value="$PROJECT_DIR$/apache-tomcat-9.0.78" />
-        <option name="version" value="9.0.78.0" />
-      </TomcatInfo>
-    </option>
-    <option name="vmOptions" value="" />
-    <module name="eecs4413-project" />
+  <configuration default="false" name="Dev" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9.0.78" ALTERNATIVE_JRE_ENABLED="true" ALTERNATIVE_JRE_PATH="temurin-17">
+    <option name="SHOW_DIALOG_ON_UPDATE" value="false" />
+    <option name="UPDATING_POLICY" value="hot-swap-classes" />
+    <deployment>
+      <artifact name="eecs4413-project:war">
+        <settings>
+          <option name="CONTEXT_PATH" value="/" />
+        </settings>
+      </artifact>
+    </deployment>
+    <server-settings>
+      <option name="BASE_DIRECTORY_NAME" value="87357aa1-1448-48cf-8ef9-7648f238c53d" />
+    </server-settings>
+    <predefined_log_file enabled="true" id="Tomcat" />
+    <predefined_log_file enabled="true" id="Tomcat Catalina" />
+    <predefined_log_file id="Tomcat Manager" />
+    <predefined_log_file id="Tomcat Host Manager" />
+    <predefined_log_file id="Tomcat Localhost Access" />
+    <RunnerSettings RunnerId="Debug">
+      <option name="DEBUG_PORT" value="61799" />
+    </RunnerSettings>
+    <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Cover">
+      <option name="USE_ENV_VARIABLES" value="true" />
+      <STARTUP>
+        <option name="USE_DEFAULT" value="true" />
+        <option name="SCRIPT" value="" />
+        <option name="VM_PARAMETERS" value="" />
+        <option name="PROGRAM_PARAMETERS" value="" />
+      </STARTUP>
+      <SHUTDOWN>
+        <option name="USE_DEFAULT" value="true" />
+        <option name="SCRIPT" value="" />
+        <option name="VM_PARAMETERS" value="" />
+        <option name="PROGRAM_PARAMETERS" value="" />
+      </SHUTDOWN>
+    </ConfigurationWrapper>
+    <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Debug">
+      <option name="USE_ENV_VARIABLES" value="true" />
+      <STARTUP>
+        <option name="USE_DEFAULT" value="true" />
+        <option name="SCRIPT" value="" />
+        <option name="VM_PARAMETERS" value="" />
+        <option name="PROGRAM_PARAMETERS" value="" />
+      </STARTUP>
+      <SHUTDOWN>
+        <option name="USE_DEFAULT" value="true" />
+        <option name="SCRIPT" value="" />
+        <option name="VM_PARAMETERS" value="" />
+        <option name="PROGRAM_PARAMETERS" value="" />
+      </SHUTDOWN>
+    </ConfigurationWrapper>
+    <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Profile">
+      <option name="USE_ENV_VARIABLES" value="true" />
+      <STARTUP>
+        <option name="USE_DEFAULT" value="true" />
+        <option name="SCRIPT" value="" />
+        <option name="VM_PARAMETERS" value="" />
+        <option name="PROGRAM_PARAMETERS" value="" />
+      </STARTUP>
+      <SHUTDOWN>
+        <option name="USE_DEFAULT" value="true" />
+        <option name="SCRIPT" value="" />
+        <option name="VM_PARAMETERS" value="" />
+        <option name="PROGRAM_PARAMETERS" value="" />
+      </SHUTDOWN>
+    </ConfigurationWrapper>
+    <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Run">
+      <option name="USE_ENV_VARIABLES" value="true" />
+      <STARTUP>
+        <option name="USE_DEFAULT" value="true" />
+        <option name="SCRIPT" value="" />
+        <option name="VM_PARAMETERS" value="" />
+        <option name="PROGRAM_PARAMETERS" value="" />
+      </STARTUP>
+      <SHUTDOWN>
+        <option name="USE_DEFAULT" value="true" />
+        <option name="SCRIPT" value="" />
+        <option name="VM_PARAMETERS" value="" />
+        <option name="PROGRAM_PARAMETERS" value="" />
+      </SHUTDOWN>
+    </ConfigurationWrapper>
     <method v="2">
       <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="activejdbc-instrumentation:instrument" />
       <option name="Make" enabled="true" />
+      <option name="BuildArtifacts" enabled="true">
+        <artifact name="eecs4413-project:war" />
+      </option>
     </method>
   </configuration>
 </component>
