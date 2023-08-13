@@ -34,13 +34,23 @@ public class BaseServlet extends HttpServlet {
                         .orElse(new Route("", this::fallback, Route.ProtectedRoute.NONE));
 
         switch (r.protectedRoute) {
-            case LOGGED_IN:
-                if (isLoggedOut(req, res)) return;
-            case LOGGED_OUT:
-                if (isLoggedIn(req, res)) return;
-            case NONE:
-                r.call(req, res);
+            case LOGGED_IN -> {
+                if (isLoggedOut(req)) {
+                    res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are not logged in!");
+                    return;
+                }
+            }
+            case LOGGED_OUT -> {
+                if (isLoggedIn(req)) {
+                    res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are already logged in!");
+                    return;
+                }
+            }
+            case NONE -> {
+            }
         }
+
+        r.call(req, res);
     }
 
     private void fallback(HttpServletRequest req, HttpServletResponse res) throws IOException {
@@ -52,18 +62,10 @@ public class BaseServlet extends HttpServlet {
     }
 
     private static boolean isLoggedOut(HttpServletRequest req) {
-        return (req.getSession().getAttribute("user") != null);
+        return (req.getSession().getAttribute("user") == null);
     }
 
-    public static boolean isLoggedOut(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        if (isLoggedOut(req)) return false;
-        res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are not logged in!");
-        return true;
-    }
-
-    public static boolean isLoggedIn(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        if (!isLoggedOut(req)) return false;
-        res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are already logged in!");
-        return true;
+    private static boolean isLoggedIn(HttpServletRequest req) {
+        return !isLoggedOut(req);
     }
 }
