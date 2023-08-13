@@ -4,6 +4,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import { useState } from 'react';
+import { useContext} from 'react';
+
+import { ShoppingCartContext } from '../components/ShoppingCartContext.js';
 
 // Mock catalogue data
 const catalogueItems = [
@@ -21,6 +24,8 @@ export default function Home({ children }) {
   const [selectedBrand, setSelectedBrand] = useState('All');
 
   const [sortType, setSortType] = useState('price-asc');
+
+  const [cart, setCart] = useContext(ShoppingCartContext);
 
   const filteredItems = catalogueItems
   .filter(item => {
@@ -121,6 +126,15 @@ export default function Home({ children }) {
     <p className="mt-2">Price: ${item.price}</p>
     <p className="mt-2">Category: {item.category}</p>
     <p className="mt-2">Brand: {item.brand}</p>
+
+      {/* Add To Cart Button */}
+      <button onClick={() => {
+          setCart([...cart, item])
+          console.log(cart)
+          }} className="mt-2 bg-green-500 text-white px-4 py-2 rounded">
+        Add to Cart
+      </button>
+    
   </div>
 ))}
         </div>
