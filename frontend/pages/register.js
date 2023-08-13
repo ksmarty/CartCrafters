@@ -1,22 +1,18 @@
 import React from 'react'
-
 import { useState } from 'react';
 
-const register = () => {
+const Register = () => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSubmit = (event) => {
         event.preventDefault();
-    
-        // Here you would typically handle the form submission,
-        // for example, send the form data to an API.
-    
-        console.log('Form submitted', { username, password });
-      };
 
-      return (
+        console.log('Form submitted', { username, password });
+    };
+
+    return (
         <div className="container mx-auto max-w-md">
           <h1 className="text-3xl font-bold mb-4">Register</h1>
   
@@ -26,7 +22,7 @@ const register = () => {
                 Username
               </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                 id="username"
                 type="text"
                 value={username}
@@ -34,13 +30,12 @@ const register = () => {
               />
             </div>
 
-  
             <div className="mb-4">
               <label className="block text-white text-sm font-bold mb-2" htmlFor="password">
                 Password
               </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                 id="password"
                 type="password"
                 value={password}
@@ -61,4 +56,4 @@ const register = () => {
     )
 }
 
-export default register
+export default Register

@@ -2,7 +2,7 @@ import React from 'react'
 
 import { useState } from 'react';
 
-const register = () => {
+const Login = () => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -26,7 +26,7 @@ const register = () => {
               Username
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
               id="username"
               type="text"
               value={username}
@@ -39,7 +39,7 @@ const register = () => {
               Password
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
               id="password"
               type="password"
               value={password}
@@ -60,4 +60,4 @@ const register = () => {
     )
 }
 
-export default register
+export default Login
