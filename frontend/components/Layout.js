@@ -30,13 +30,13 @@ const Layout = ({ children }) => {
       
       {/* Navbar component that doesn't animate */}
       <nav className="w-full p-4 flex justify-between items-center bg-blue-500 text-white">
-      <h1 className="text-lg font-bold">CartCrafters</h1>
+      <Link href="/" className="hover:text-gray-200"><h1 className="text-lg font-bold">CartCrafters</h1></Link>
       <div className="flex gap-4">
-        <Link href="/" className="hover:text-gray-200">Catalog View</Link>
-        <Link href="/cart" className="hover:text-gray-200">Shopping Cart View</Link>
-        <Link href="/checkout" className="hover:text-gray-200">Checkout View</Link>
-        <Link href="/register" className="hover:text-gray-200">Registration View</Link>
-        <Link href="/admin" className="hover:text-gray-200">Admin Page View</Link>
+        <Link href="/" className="hover:text-gray-200">Catalog</Link>
+        <Link href="/cart" className="hover:text-gray-200">Shopping Cart</Link>
+        <Link href="/checkout" className="hover:text-gray-200">Checkout</Link>
+        <Link href="/register" className="hover:text-gray-200">Register</Link>
+        <Link href="/admin" className="hover:text-gray-200">Admin </Link>
       </div>
     </nav>
       <Transition location={router.pathname}>
