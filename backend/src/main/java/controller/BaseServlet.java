@@ -5,10 +5,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Objects;
-
-import static controller.Utils.*;
 
 public class BaseServlet extends HttpServlet {
 
@@ -35,9 +35,9 @@ public class BaseServlet extends HttpServlet {
 
         switch (r.protectedRoute) {
             case LOGGED_IN:
-                if (authCheck(req, res)) return;
+                if (isLoggedOut(req, res)) return;
             case LOGGED_OUT:
-                if (notAuthCheck(req, res)) return;
+                if (isLoggedIn(req, res)) return;
             case NONE:
                 r.call(req, res);
         }
@@ -45,5 +45,25 @@ public class BaseServlet extends HttpServlet {
 
     private void fallback(HttpServletRequest req, HttpServletResponse res) throws IOException {
         res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    public static String getRequestedPath(StringBuffer url, String basePath) throws MalformedURLException {
+        return new URL(url.toString()).getPath().replace(String.format("/%s/", basePath), "");
+    }
+
+    private static boolean isLoggedOut(HttpServletRequest req) {
+        return (req.getSession().getAttribute("user") != null);
+    }
+
+    public static boolean isLoggedOut(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        if (isLoggedOut(req)) return false;
+        res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are not logged in!");
+        return true;
+    }
+
+    public static boolean isLoggedIn(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        if (!isLoggedOut(req)) return false;
+        res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are already logged in!");
+        return true;
     }
 }
