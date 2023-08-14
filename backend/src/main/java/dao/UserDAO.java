@@ -5,6 +5,8 @@ import model.User;
 public interface UserDAO {
     User create(String username, String password);
 
+    User createGuest();
+
     boolean update(User user);
 
     User getById(int id);

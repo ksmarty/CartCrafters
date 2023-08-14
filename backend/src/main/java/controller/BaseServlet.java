@@ -1,5 +1,9 @@
 package controller;
 
+import db.UserDB;
+import model.User;
+import org.javalite.activejdbc.Base;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +31,8 @@ public class BaseServlet extends HttpServlet {
             throws ServletException, IOException {
         final String path = getRequestedPath(req.getRequestURL(), basePath);
 
+        res.setContentType("application/json");
+
         Route r =
                 routes.stream()
                         .filter(e -> Objects.equals(e.path, path))
@@ -47,25 +53,40 @@ public class BaseServlet extends HttpServlet {
                 }
             }
             case NONE -> {
+                if (isLoggedOut(req) && !isGuest(req)) {
+                    req.getSession().setAttribute("user", new UserDB().createGuest());
+                }
             }
         }
 
+        Base.open("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:cartcrafters", "sa", "");
         r.call(req, res);
+        Base.close();
     }
 
     private void fallback(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        res.sendError(HttpServletResponse.SC_NOT_FOUND, "Bad endpoint!");
     }
 
     public static String getRequestedPath(StringBuffer url, String basePath) throws MalformedURLException {
         return new URL(url.toString()).getPath().replace(String.format("/%s/", basePath), "");
     }
 
-    private static boolean isLoggedOut(HttpServletRequest req) {
-        return (req.getSession().getAttribute("user") == null);
+    public static boolean isLoggedIn(HttpServletRequest req) {
+        User user = getCurrentUser(req);
+        return (user != null && !user.getBoolean("isGuest"));
     }
 
-    private static boolean isLoggedIn(HttpServletRequest req) {
-        return !isLoggedOut(req);
+    public static boolean isLoggedOut(HttpServletRequest req) {
+        return !isLoggedIn(req);
+    }
+
+    public static boolean isGuest(HttpServletRequest req) {
+        User user = getCurrentUser(req);
+        return (user != null && user.getBoolean("isGuest"));
+    }
+
+    public static User getCurrentUser(HttpServletRequest req) {
+        return (User) req.getSession().getAttribute("user");
     }
 }
