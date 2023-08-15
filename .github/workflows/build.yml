@@ -15,9 +15,20 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: "17"
+          distribution: "temurin"
           cache: maven
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - name: Install Frontend Dependencies
+        run: npm ci --prefix frontend
+
+      - name: Build Frontend
+        run: npm run build --prefix frontend
 
       - name: Build with Maven
         run: mvn -f backend/ clean package
@@ -39,6 +50,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          push: true
+          push: ${{ !github.event.act }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
