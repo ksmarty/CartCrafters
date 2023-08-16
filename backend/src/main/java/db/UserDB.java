@@ -13,6 +13,11 @@ public class UserDB implements UserDAO {
     }
 
     @Override
+    public User createGuest() {
+        return withDb(() -> User.createIt("isGuest", true));
+    }
+
+    @Override
     public User getById(int id) {
         return withDb(() -> User.findFirst("userId = ?", id));
     }

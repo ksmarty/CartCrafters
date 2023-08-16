@@ -3,40 +3,26 @@ package controller;
 import db.UserDB;
 import model.User;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
-import static controller.Utils.*;
+import static controller.Route.ProtectedRoute.LOGGED_IN;
+import static controller.Route.ProtectedRoute.LOGGED_OUT;
 
 @WebServlet(urlPatterns = "/user/*", name = "userServlet")
-public class UserServlet extends HttpServlet {
-    @Override
-    public void service(HttpServletRequest req, HttpServletResponse res)
-            throws ServletException, IOException {
-        switch (getRequestedPath(req.getRequestURL(), "user")) {
-            case "create":
-                if (notAuthCheck(req, res)) return;
-                create(req, res);
-                break;
-            case "login":
-                if (notAuthCheck(req, res)) return;
-                login(req, res);
-                break;
-            case "logout":
-                if (authCheck(req, res)) return;
-                logout(req, res);
-                break;
-            case "details":
-                if (authCheck(req, res)) return;
-                getDetails(req, res);
-                break;
-            default:
-                fallback(req, res);
-        }
+public class UserServlet extends BaseServlet {
+
+    public UserServlet() {
+        super();
+        addPaths("user", List.of(
+                new Route("create", this::create, LOGGED_OUT),
+                new Route("login", this::login, LOGGED_OUT),
+                new Route("logout", this::logout, LOGGED_IN),
+                new Route("details", this::getDetails, LOGGED_IN)
+        ));
     }
 
     private void create(HttpServletRequest req, HttpServletResponse res) throws IOException {
@@ -90,9 +76,5 @@ public class UserServlet extends HttpServlet {
     private void getDetails(HttpServletRequest req, HttpServletResponse res) throws IOException {
         User user = (User) req.getSession().getAttribute("user");
         res.getWriter().println(user.toString());
-    }
-
-    private void fallback(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        res.setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
 }
