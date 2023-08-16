@@ -7,7 +7,6 @@ app = "cartcrafters"
 primary_region = "yyz"
 
 [build]
-image = "ghcr.io/ksmarty/cartcrafters:main"
 
 [http_service]
 internal_port = 3000
