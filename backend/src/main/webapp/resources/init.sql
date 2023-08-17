@@ -61,26 +61,30 @@ CREATE TABLE Cart_Items
 ------------- Dummy Data -------------
 
 -- Users
-INSERT INTO Users (userId, username, firstName, lastName, email, password)
+INSERT INTO Users (userId, username, firstName, lastName, email, password, address, isGuest)
 VALUES (1, 'john123', 'John', 'Doe', 'john@example.com',
-        '$s0$e0801$ZfCnHLn2aCZuPMjNcgFfRg==$/tT/0Z7W2qfI5jFXwDf/u0UlLnFbufxuUKSjD2gGllo='), --password123
+        '$s0$e0801$ZfCnHLn2aCZuPMjNcgFfRg==$/tT/0Z7W2qfI5jFXwDf/u0UlLnFbufxuUKSjD2gGllo=', --password123
+        '123 Main St, New York, NY 10001', FALSE),
        (2, 'jane456', 'Jane', 'Doe', 'jane@example.com',
-        '$s0$e0801$mKgNnLo2TVWkD1euIvDxsg==$ln7O96ik/BQyjQLldvSpXqLISy3AMoXoOlcG0Lh4KKY='), --password456
+        '$s0$e0801$mKgNnLo2TVWkD1euIvDxsg==$ln7O96ik/BQyjQLldvSpXqLISy3AMoXoOlcG0Lh4KKY=', --password456
+        '456 Park Ave, New York, NY 10001', FALSE),
        (3, 'bob789', 'Bob', 'Smith', 'bob@example.com',
-        '$s0$e0801$WYu8BKezCd2YvQrtAtRweA==$CNbQ3sG7aLdgOjsZozoqzJ1mt3pBN354uHxdIxr2WNg='), --password789
+        '$s0$e0801$WYu8BKezCd2YvQrtAtRweA==$CNbQ3sG7aLdgOjsZozoqzJ1mt3pBN354uHxdIxr2WNg=', --password789
+        '789 1st St, Los Angeles, CA 90001', FALSE),
        (4, 'sarah101', 'Sarah', 'Johnson', 'sarah@example.com',
-        '$s0$e0801$5qEFYa4sonKRDIznTdA+jg==$ngJ2ohoMPCKaX25APYJOIopfu24WpcwEGSzZ4xaCYGs='), --password101
+        '$s0$e0801$5qEFYa4sonKRDIznTdA+jg==$ngJ2ohoMPCKaX25APYJOIopfu24WpcwEGSzZ4xaCYGs=', --password101
+        '101 Main St, Chicago, IL 60001', FALSE),
        (5, 'mike234', 'Mike', 'Williams', 'mike@example.com',
-        '$s0$e0801$dfLqYlqG/7B97U9iP5WdAQ==$Y9L6nmbRYNVtRmwNAM2NoTsiNxp0WmayJqSQinw6vCk=');
---password234
+        '$s0$e0801$dfLqYlqG/7B97U9iP5WdAQ==$Y9L6nmbRYNVtRmwNAM2NoTsiNxp0WmayJqSQinw6vCk=', --password234
+        '234 Elm St, Miami, FL 33001', FALSE);
 
 -- Products
-INSERT INTO Products (productId, name, price, quantity)
-VALUES (1, 'T-Shirt', 19.99, 10),
-       (2, 'Jeans', 49.99, 15),
-       (3, 'Backpack', 39.99, 20),
-       (4, 'Smart Phone', 499.99, 5),
-       (5, 'Bluetooth Speaker', 99.99, 12);
+INSERT INTO Products (productId, name, description, category, brand, price, quantity)
+VALUES (1, 'T-Shirt', 'Cotton t-shirt, various colors', 'Apparel', 'BrandCo', 19.99, 10),
+       (2, 'Jeans', 'Blue denim jeans', 'Apparel', 'ClothCo', 49.99, 15),
+       (3, 'Backpack', 'Canvas backpack for school', 'Bags', 'BagShop', 39.99, 20),
+       (4, 'Smart Phone', 'Latest model smartphone', 'Electronics', 'PhoneMaker', 499.99, 5),
+       (5, 'Bluetooth Speaker', 'Portable wireless speaker', 'Electronics', 'SpeakerCorp', 99.99, 12);
 
 -- Orders
 INSERT INTO Orders (orderId, userId, totalAmount)
