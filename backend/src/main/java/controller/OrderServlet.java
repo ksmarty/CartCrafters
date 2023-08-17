@@ -1,6 +1,5 @@
 package controller;
 
-import com.google.gson.Gson;
 import dao.OrderDAO;
 import db.OrderDB;
 import model.Order;
@@ -24,28 +23,68 @@ public class OrderServlet extends BaseServlet {
                 List.of(
                         new Route("get", this::getOrders, LOGGED_IN),
                         new Route("getItems", this::getOrderItems, LOGGED_IN),
-                        new Route("getAll", this::getAllOrders, ADMIN)
+                        new Route("getAll", this::getAllOrders, ADMIN),
+                        new Route("getItemsAdmin", this::getOrderItemsAdmin, ADMIN)
                 ));
     }
 
 
     private void getOrders(HttpServletRequest req, HttpServletResponse res) throws IOException {
         User user = getCurrentUser(req);
-        List<Order> orders = new OrderDB().getUserOrders(user);
-        res.getWriter().println(new Gson().toJson(orders));
+        OrderDAO odb = new OrderDB();
+        List<Order> orders = odb.getUserOrders(user);
+        res.getWriter().println(odb.toJSON(orders));
     }
 
     private void getOrderItems(HttpServletRequest req, HttpServletResponse res) throws IOException {
         final String orderNumber = req.getParameter("order");
+
+        try {
+            Integer.parseInt(orderNumber);
+        } catch (NumberFormatException e) {
+            res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Order number is not valid!");
+            return;
+        }
+
         User user = getCurrentUser(req);
         OrderDAO odb = new OrderDB();
 
         Order order = odb.getUserOrder(user, orderNumber);
+
+        if (order == null) {
+            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Order does not belong to user!");
+            return;
+        }
+
         List<OrderItem> orderItems = odb.getOrderItems(order);
-        res.getWriter().println(new Gson().toJson(orderItems));
+        res.getWriter().println(odb.toJSON(orderItems));
     }
 
     private void getAllOrders(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        res.getWriter().println(new Gson().toJson(new OrderDB().getAllOrders()));
+        OrderDAO odb = new OrderDB();
+        res.getWriter().println(odb.toJSON(odb.getAllOrders()));
+    }
+
+    private void getOrderItemsAdmin(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        final String orderNumber = req.getParameter("order");
+
+        try {
+            Integer.parseInt(orderNumber);
+        } catch (NumberFormatException e) {
+            res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Order number is not valid!");
+            return;
+        }
+
+        OrderDAO odb = new OrderDB();
+
+        Order order = odb.getOrder(orderNumber);
+
+        if (order == null) {
+            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Order does not exist!");
+            return;
+        }
+
+        List<OrderItem> orderItems = odb.getOrderItems(order);
+        res.getWriter().println(odb.toJSON(orderItems));
     }
 }

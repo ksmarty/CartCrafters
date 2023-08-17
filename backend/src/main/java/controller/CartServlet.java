@@ -49,6 +49,7 @@ public class CartServlet extends BaseServlet {
         }
 
         // Add payment logic here
+        // https://www.fakepay.io/
 
         res.getWriter().println(order.toJson(true));
     }
