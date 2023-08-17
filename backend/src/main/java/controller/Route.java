@@ -12,7 +12,8 @@ public class Route {
     public enum ProtectedRoute {
         LOGGED_IN,
         LOGGED_OUT,
-        NONE
+        NONE,
+        ADMIN
     }
 
     public Route(String path, ServletMethod method, ProtectedRoute protectedRoute) {

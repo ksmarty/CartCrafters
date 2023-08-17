@@ -12,6 +12,8 @@ public interface CartDAO {
 
     CartItem getItem(Cart cart, String itemId);
 
+    Double getTotal(Cart cart);
+
     boolean addItem(Cart cart, String itemId, int quantity);
 
     boolean updateQuantity(Cart cart, String itemId, int quantity);

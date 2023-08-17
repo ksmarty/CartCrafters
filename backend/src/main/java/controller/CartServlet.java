@@ -3,7 +3,9 @@ package controller;
 
 import dao.CartDAO;
 import db.CartDB;
+import db.OrderDB;
 import model.Cart;
+import model.Order;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,8 +24,33 @@ public class CartServlet extends BaseServlet {
                         new Route("add", this::upsertItem, NONE),
                         new Route("update", this::upsertItem, NONE),
                         new Route("remove", this::removeItem, NONE),
-                        new Route("get", this::getItems, NONE)
+                        new Route("get", this::getItems, NONE),
+                        new Route("checkout", this::checkout, NONE)
                 ));
+    }
+
+    private void checkout(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        final String ccNumber = req.getParameter("ccNumber");
+        final String ccExpiryMonth = req.getParameter("ccExpiryMonth");
+        final String ccExpiryYear = req.getParameter("ccExpiryYear");
+        final String ccCVV = req.getParameter("ccCVV");
+
+        final String shippingAddress = req.getParameter("shippingAddress");
+        final String shippingName = req.getParameter("shippingName");
+
+        CartDAO cartDB = new CartDB();
+        Cart cart = cartDB.getCart(getCurrentUser(req));
+
+        Order order = new OrderDB().create(cart);
+
+        if (order == null) {
+            res.sendError(HttpServletResponse.SC_CONFLICT, "Item(s) in cart no longer in stock! Please try and purchase again!");
+            return;
+        }
+
+        // Add payment logic here
+
+        res.getWriter().println(order.toJson(true));
     }
 
 

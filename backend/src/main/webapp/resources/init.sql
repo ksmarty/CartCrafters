@@ -7,7 +7,8 @@ CREATE TABLE Users
     email     VARCHAR(100),
     password  VARCHAR(256),
     address   VARCHAR(200),
-    isGuest   BOOLEAN DEFAULT FALSE
+    isGuest   BOOLEAN DEFAULT FALSE,
+    isAdmin   BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE Products
