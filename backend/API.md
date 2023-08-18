@@ -89,3 +89,58 @@ Updated contents of the cart. See `/cart/add`
 #### Returns
 
 Updated contents of the cart. See `/cart/add`
+
+## `/product`
+
+### `/product/get/all`
+
+#### Returns
+
+JSON array - All products in the database
+
+```js
+[
+    {
+        "brand": String,
+        "category": String,
+        "description": String,
+        "name": String,
+        "price": Number,
+        "productid": Number,
+        "quantity": Number
+    }
+]
+```
+
+### `/product/get/categories`
+
+#### Returns
+
+String array - All unique categories in the database
+
+### `/product/get/brands`
+
+#### Returns
+
+String array - All unique brands in the database
+
+### `/product/get/product`
+
+#### Params
+
+- `id`: `Number`
+
+#### Returns
+
+JSON Object - Product properties. See `/product/get/all`
+
+### `/product/search`
+
+#### Params
+
+- `field`: `"category" | "brand"`
+- `q`: `String`
+
+#### Returns
+
+JSON Object - Product properties. See `/product/get/all`
