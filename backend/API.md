@@ -113,7 +113,6 @@ Throws 409 if user tries to purchase more of an item than is available.
 
 All the user's orders
 
-```js
 [
     {
         "orderid": Number,
@@ -121,7 +120,6 @@ All the user's orders
         "userid": Number
     }
 ]
-```
 
 ### `/order/getItems` 🔒
 
@@ -170,3 +168,58 @@ Every order in the database. See `/order/get`
 #### Returns
 
 All the items in any order
+
+## `/product`
+
+### `/product/get/all`
+
+#### Returns
+
+JSON array - All products in the database
+
+```js
+[
+    {
+        "brand": String,
+        "category": String,
+        "description": String,
+        "name": String,
+        "price": Number,
+        "productid": Number,
+        "quantity": Number
+    }
+]
+```
+
+### `/product/get/categories`
+
+#### Returns
+
+String array - All unique categories in the database
+
+### `/product/get/brands`
+
+#### Returns
+
+String array - All unique brands in the database
+
+### `/product/get/product`
+
+#### Params
+
+- `id`: `Number`
+
+#### Returns
+
+JSON Object - Product properties. See `/product/get/all`
+
+### `/product/search`
+
+#### Params
+
+- `field`: `"category" | "brand"`
+- `q`: `String`
+
+#### Returns
+
+JSON Object - Product properties. See `/product/get/all`

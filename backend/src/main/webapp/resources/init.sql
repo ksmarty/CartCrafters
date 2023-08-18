@@ -78,12 +78,12 @@ VALUES (1, 'john123', 'John', 'Doe', 'john@example.com',
 --password234
 
 -- Products
-INSERT INTO Products (productId, name, price, quantity)
-VALUES (1, 'T-Shirt', 19.99, 10),
-       (2, 'Jeans', 49.99, 15),
-       (3, 'Backpack', 39.99, 20),
-       (4, 'Smart Phone', 499.99, 5),
-       (5, 'Bluetooth Speaker', 99.99, 12);
+INSERT INTO Products (productId, name, description, category, brand, price, quantity)
+VALUES (1, 'T-Shirt', 'Cotton t-shirt, various colors', 'Apparel', 'BrandCo', 19.99, 10),
+       (2, 'Jeans', 'Blue denim jeans', 'Apparel', 'ClothCo', 49.99, 15),
+       (3, 'Backpack', 'Canvas backpack for school', 'Bags', 'BagShop', 39.99, 20),
+       (4, 'Smart Phone', 'Latest model smartphone', 'Electronics', 'PhoneMaker', 499.99, 5),
+       (5, 'Bluetooth Speaker', 'Portable wireless speaker', 'Electronics', 'SpeakerCorp', 99.99, 12);
 
 -- Orders
 INSERT INTO Orders (orderId, userId, totalAmount)
