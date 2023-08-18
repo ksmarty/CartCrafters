@@ -34,6 +34,11 @@ public class CartDB implements CartDAO {
     }
 
     @Override
+    public Double getTotal(Cart cart) {
+        return withDb(() -> getItems(cart).stream().reduce(0.0, (total, item) -> total + item.getDouble("quantity") * item.parent(Product.class).getDouble("price"), Double::sum));
+    }
+
+    @Override
     public boolean addItem(Cart cart, String itemId, int quantity) {
         return withDb(() -> {
             CartItem cartItem = getItem(cart, itemId);

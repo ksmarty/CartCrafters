@@ -57,6 +57,11 @@ public class BaseServlet extends HttpServlet {
                     req.getSession().setAttribute("user", new UserDB().createGuest());
                 }
             }
+            case ADMIN -> {
+                if (!getCurrentUser(req).getBoolean("isAdmin")) {
+                    res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are not an admin!");
+                }
+            }
         }
 
         Base.open("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:cartcrafters", "sa", "");

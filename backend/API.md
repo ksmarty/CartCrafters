@@ -1,5 +1,6 @@
 # CartCrafters API
 
+> - 🔑 Requires user be an admin
 > - 🔓 Requires user be logged out
 > - 🔒️ Requires user be logged in
 > - ⠀⠀ Works for guests and users
@@ -89,6 +90,84 @@ Updated contents of the cart. See `/cart/add`
 #### Returns
 
 Updated contents of the cart. See `/cart/add`
+
+### `/cart/checkout`
+
+#### Returns
+
+Throws 409 if user tries to purchase more of an item than is available.
+
+```js
+{
+    "orderid": Number,
+    "totalamount": Number,
+    "userid": Number
+}
+```
+
+## `/order`
+
+### `/order/get` 🔒
+
+#### Returns
+
+All the user's orders
+
+[
+    {
+        "orderid": Number,
+        "totalamount": Number,
+        "userid": Number
+    }
+]
+
+### `/order/getItems` 🔒
+
+#### Params
+
+- `order`: `Number`
+
+#### Returns
+
+All the items in a user's order
+
+```js
+[
+    {
+        "amount": Number,
+        "orderid": Number,
+        "orderitemid": Number,
+        "productid": Number,
+        "quantity": Number,
+        "parents": {
+            "products": [
+                {
+                    "name": String,
+                    "price": Number,
+                    "productid": Number,
+                    "quantity": Number
+                }
+            ]
+        }
+    }
+]
+```
+
+### `/order/getAll` 🔑
+
+#### Returns
+
+Every order in the database. See `/order/get`
+
+### `/order/getItemsAdmin` 🔑
+
+#### Params
+
+- `order`: `Number`
+
+#### Returns
+
+All the items in any order
 
 ## `/product`
 

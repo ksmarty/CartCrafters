@@ -1,3 +1,6 @@
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import okhttp3.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -7,7 +10,6 @@ import java.io.IOException;
 import java.net.CookieManager;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class CartTests {
     final String BASE_URL = "http://localhost:8080";
@@ -29,6 +31,22 @@ public class CartTests {
         return String.format("%s/cart/%s", BASE_URL, path);
     }
 
+    private Response login() throws IOException {
+        RequestBody requestBody = new FormBody.Builder()
+                .add("username", "john123")
+                .add("password", "password123")
+                .build();
+
+        Request request = new Request.Builder()
+                .url(getPath("login"))
+                .post(requestBody)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            return response;
+        }
+    }
+
     @Test
     public void testGuestCart() throws IOException {
         /* ***********************
@@ -45,7 +63,13 @@ public class CartTests {
 
         try (Response response = client.newCall(requestAdd).execute()) {
             assert response.body() != null;
-            assertTrue(response.body().string().contains("\"quantity\":4"));
+            JsonArray responseJSON = new Gson().fromJson(response.body().string(), JsonArray.class);
+            JsonObject selected = responseJSON.asList().stream()
+                    .map(e -> (JsonObject) e)
+                    .filter(e -> e.get("productid").getAsInt() == 3)
+                    .findFirst().orElse(null);
+            assert selected != null;
+            assertEquals(4, selected.get("quantity").getAsInt());
         }
 
         /* ***********************
@@ -58,7 +82,13 @@ public class CartTests {
 
         try (Response response = client.newCall(requestGet).execute()) {
             assert response.body() != null;
-            assertTrue(response.body().string().contains("\"quantity\":4"));
+            JsonArray responseJSON = new Gson().fromJson(response.body().string(), JsonArray.class);
+            JsonObject selected = responseJSON.asList().stream()
+                    .map(e -> (JsonObject) e)
+                    .filter(e -> e.get("productid").getAsInt() == 3)
+                    .findFirst().orElse(null);
+            assert selected != null;
+            assertEquals(4, selected.get("quantity").getAsInt());
         }
 
         /* ***********************
@@ -75,7 +105,13 @@ public class CartTests {
 
         try (Response response = client.newCall(requestUpdate).execute()) {
             assert response.body() != null;
-            assertTrue(response.body().string().contains("\"quantity\":2"));
+            JsonArray responseJSON = new Gson().fromJson(response.body().string(), JsonArray.class);
+            JsonObject selected = responseJSON.asList().stream()
+                    .map(e -> (JsonObject) e)
+                    .filter(e -> e.get("productid").getAsInt() == 3)
+                    .findFirst().orElse(null);
+            assert selected != null;
+            assertEquals(2, selected.get("quantity").getAsInt());
         }
 
         /* ***********************
@@ -91,7 +127,76 @@ public class CartTests {
 
         try (Response response = client.newCall(requestRemove).execute()) {
             assert response.body() != null;
-            assertEquals("[\n\n]", response.body().string().trim());
+            JsonArray responseJSON = new Gson().fromJson(response.body().string(), JsonArray.class);
+            assertEquals(0, responseJSON.size());
+        }
+    }
+
+    @Test
+    public void testCheckout() throws IOException {
+        login();
+
+        /* ***********************
+         * Add item
+         * ***********************/
+
+        Request requestAdd = new Request.Builder()
+                .url(getPath("add"))
+                .post(new FormBody.Builder()
+                        .add("item", "3")
+                        .add("qty", "4")
+                        .build())
+                .build();
+
+        try (Response response = client.newCall(requestAdd).execute()) {
+            assert response.body() != null;
+            JsonArray responseJSON = new Gson().fromJson(response.body().string(), JsonArray.class);
+            JsonObject selected = responseJSON.asList().stream()
+                    .map(e -> (JsonObject) e)
+                    .filter(e -> e.get("productid").getAsInt() == 3)
+                    .findFirst().orElse(null);
+            assert selected != null;
+            assertEquals(4, selected.get("quantity").getAsInt());
+        }
+
+        /* ***********************
+         * Add item
+         * ***********************/
+
+        requestAdd = new Request.Builder()
+                .url(getPath("add"))
+                .post(new FormBody.Builder()
+                        .add("item", "4")
+                        .add("qty", "1")
+                        .build())
+                .build();
+
+        try (Response response = client.newCall(requestAdd).execute()) {
+            assert response.body() != null;
+            JsonArray responseJSON = new Gson().fromJson(response.body().string(), JsonArray.class);
+            JsonObject selected = responseJSON.asList().stream()
+                    .map(e -> (JsonObject) e)
+                    .filter(e -> e.get("productid").getAsInt() == 4)
+                    .findFirst().orElse(null);
+            assert selected != null;
+            assertEquals(1, selected.get("quantity").getAsInt());
+        }
+
+        /* ***********************
+         * Checkout
+         * ***********************/
+
+        requestAdd = new Request.Builder()
+                .url(getPath("checkout"))
+                .post(new FormBody.Builder()
+                        .build())
+                .build();
+
+        try (Response response = client.newCall(requestAdd).execute()) {
+            assert response.body() != null;
+            System.out.println(response.body().string());
+            JsonObject responseJSON = new Gson().fromJson(response.body().string(), JsonObject.class);
+            assertEquals(659.95, responseJSON.get("totalamount").getAsDouble(), 0.01);
         }
     }
 }
