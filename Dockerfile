@@ -13,7 +13,7 @@ ENV TOMCAT_MAJOR=9
 ENV TOMCAT_VERSION=9.0.78
 ENV CATALINA_HOME=/opt/tomcat
 
-RUN wget -q https://mirror.navercorp.com/apache/tomcat/tomcat-${TOMCAT_MAJOR}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz && \
+RUN wget -q https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_MAJOR}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz && \
     tar -xf apache-tomcat-${TOMCAT_VERSION}.tar.gz && \
     rm apache-tomcat-${TOMCAT_VERSION}.tar.gz && \
     mv apache-tomcat-${TOMCAT_VERSION} ${CATALINA_HOME}
