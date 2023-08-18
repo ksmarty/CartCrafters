@@ -1,3 +1,6 @@
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import okhttp3.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -7,7 +10,6 @@ import java.io.IOException;
 import java.net.CookieManager;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class CartTests {
     final String BASE_URL = "http://localhost:8080";
@@ -45,7 +47,10 @@ public class CartTests {
 
         try (Response response = client.newCall(requestAdd).execute()) {
             assert response.body() != null;
-            assertTrue(response.body().string().contains("\"quantity\":4"));
+            JsonArray responseJSON = new Gson().fromJson(response.body().string(), JsonArray.class);
+            JsonObject selected = (JsonObject) responseJSON.asList().stream().filter(e -> ((JsonObject) e).get("productid").getAsInt() == 3).findFirst().orElse(null);
+            assert selected != null;
+            assertEquals(4, selected.get("quantity").getAsInt());
         }
 
         /* ***********************
@@ -58,7 +63,10 @@ public class CartTests {
 
         try (Response response = client.newCall(requestGet).execute()) {
             assert response.body() != null;
-            assertTrue(response.body().string().contains("\"quantity\":4"));
+            JsonArray responseJSON = new Gson().fromJson(response.body().string(), JsonArray.class);
+            JsonObject selected = (JsonObject) responseJSON.asList().stream().filter(e -> ((JsonObject) e).get("productid").getAsInt() == 3).findFirst().orElse(null);
+            assert selected != null;
+            assertEquals(4, selected.get("quantity").getAsInt());
         }
 
         /* ***********************
@@ -75,7 +83,10 @@ public class CartTests {
 
         try (Response response = client.newCall(requestUpdate).execute()) {
             assert response.body() != null;
-            assertTrue(response.body().string().contains("\"quantity\":2"));
+            JsonArray responseJSON = new Gson().fromJson(response.body().string(), JsonArray.class);
+            JsonObject selected = (JsonObject) responseJSON.asList().stream().filter(e -> ((JsonObject) e).get("productid").getAsInt() == 3).findFirst().orElse(null);
+            assert selected != null;
+            assertEquals(2, selected.get("quantity").getAsInt());
         }
 
         /* ***********************
@@ -91,7 +102,8 @@ public class CartTests {
 
         try (Response response = client.newCall(requestRemove).execute()) {
             assert response.body() != null;
-            assertEquals("[\n\n]", response.body().string().trim());
+            JsonArray responseJSON = new Gson().fromJson(response.body().string(), JsonArray.class);
+            assertEquals(0, responseJSON.size());
         }
     }
 }
