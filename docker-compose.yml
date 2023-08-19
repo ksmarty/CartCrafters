@@ -1,0 +1,10 @@
+version: "3.3"
+services:
+  cartcrafters:
+    container_name: cartcrafters
+    image: "ghcr.io/ksmarty/cartcrafters:main"
+    ports:
+      - "80:3000"
+    #   Uncomment to access backend externally
+    #   - "8080:8080"
+    restart: unless-stopped
