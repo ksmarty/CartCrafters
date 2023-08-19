@@ -33,21 +33,25 @@ services:
     restart: unless-stopped
 ```
 
+## API
+
+[View Here](https://studio-ws.apicur.io/sharing/803e7642-744f-434d-8077-3155542a53dc)
+
 ## Installation 🛠️
 
 ### Prerequisites
 
 Make sure the following are installed on your local development machine:
 
-- Java Development Kit (JDK)
+- Java Development Kit 17 ([Temurin](https://adoptium.net/temurin/releases/))
 
 ### Setup
 
 1. Clone this repository to your local machine using `https://github.com/ksmarty/CartCrafters.git`.
-2. Import the project into your preferred IDE.
+2. Import the project into your preferred IDE. We use IntelliJ IDEA Ultimate
 3. Install the recommended extensions for your IDE.
 4. Run the Dev configuration.
-5. Navigate to `http://localhost:8080/` or `http://localhost:8080/eecs4413-project/` in your web browser to access the application.
+5. Navigate to `http://localhost:8080/` in your web browser to access the application.
 
 ## Contribution 🤝
 
