@@ -1,0 +1,65 @@
+@startuml CodeCrafters
+
+entity "Users" as users {
+  + userId: INT (PK)
+  --
+  username: VARCHAR(20)
+  firstName: VARCHAR(50)
+  lastName: VARCHAR(50)
+  email: VARCHAR(100)
+  password: VARCHAR(256)
+  address: VARCHAR(200)
+  isGuest: BOOLEAN
+  isAdmin: BOOLEAN
+}
+
+entity "Products" as products {
+  + productId: INT (PK)
+  --
+  name: VARCHAR(100)
+  description: VARCHAR(500)
+  category: VARCHAR(50)
+  brand: VARCHAR(50)
+  price: DECIMAL(10,2)
+  quantity: INT
+}
+
+entity "Orders" as orders {
+  + orderId: INT (PK)
+  --
+  userId: INT (FK)
+  orderDate: DATE
+  totalAmount: DECIMAL(10,2)
+}
+
+entity "Order_Items" as order_items {
+  + orderItemId: INT (PK)
+  --
+  orderId: INT (FK)
+  productId: INT (FK)
+  quantity: INT
+  amount: DECIMAL(10,2)
+}
+
+entity "Carts" as carts {
+  + cartId: INT (PK)
+  --
+  userId: INT (FK)
+}
+
+entity "Cart_Items" as cart_items {
+  + cartItemId: INT (PK)
+  --
+  cartId: INT (FK)
+  productId: INT (FK)
+  quantity: INT
+}
+
+users ||--o{ orders : "FK"
+orders ||--o{ order_items : "FK"
+products ||--o{ order_items : "FK"
+users ||--o{ carts : "FK"
+carts ||--o{ cart_items : "FK"
+products ||--o{ cart_items : "FK"
+
+@enduml
