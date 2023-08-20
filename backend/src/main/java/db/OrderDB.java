@@ -73,6 +73,7 @@ public class OrderDB implements OrderDAO {
         return withDb(() -> user.getAll(Order.class).load());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<OrderItem> getOrderItems(Order order) {
         return withDb(() -> order.getAll(OrderItem.class).include(Product.class));

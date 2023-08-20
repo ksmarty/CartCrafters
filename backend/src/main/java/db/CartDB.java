@@ -11,6 +11,7 @@ import static org.javalite.activejdbc.Base.withDb;
 
 public class CartDB implements CartDAO {
 
+    @SuppressWarnings("unchecked")
     @Override
     public LazyList<CartItem> getItems(Cart cart) {
         return withDb(() -> cart.getAll(CartItem.class).include(Product.class));
