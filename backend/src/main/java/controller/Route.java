@@ -23,4 +23,9 @@ public class Route {
     public void call() throws IOException {
         method.f();
     }
+
+    @FunctionalInterface
+    public interface ServletMethod {
+        void f() throws IOException;
+    }
 }
