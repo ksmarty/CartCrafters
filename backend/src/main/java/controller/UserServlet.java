@@ -4,7 +4,6 @@ import db.UserDB;
 import model.User;
 
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
@@ -25,9 +24,9 @@ public class UserServlet extends BaseServlet {
         ));
     }
 
-    private void create(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String username = rw.getParameter("username");
-        final String password = rw.getParameter("password");
+    private void create() throws IOException {
+        final String username = req.getParameter("username");
+        final String password = req.getParameter("password");
 
         if (username == null || password == null) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username and/or password is missing");
@@ -48,13 +47,13 @@ public class UserServlet extends BaseServlet {
             return;
         }
 
-        rw.getSession().setAttribute("user", user);
-        res.getWriter().printf("User '%s' created successfully!", user.getString("username"));
+        req.getSession().setAttribute("user", user);
+        res.printf("User '%s' created successfully!", user.getString("username"));
     }
 
-    private void login(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String username = rw.getParameter("username");
-        final String password = rw.getParameter("password");
+    private void login() throws IOException {
+        final String username = req.getParameter("username");
+        final String password = req.getParameter("password");
 
         UserDB udb = new UserDB();
 
@@ -63,18 +62,18 @@ public class UserServlet extends BaseServlet {
             return;
         }
 
-        rw.getSession().setAttribute("user", udb.getByUsername(username));
-        res.getWriter().printf("Welcome back %s!", username);
-        rw.getSession().getId();
+        req.getSession().setAttribute("user", udb.getByUsername(username));
+        res.printf("Welcome back %s!", username);
+        req.getSession().getId();
     }
 
-    private void logout(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        rw.getSession().removeAttribute("user");
-        res.getWriter().println("See ya!");
+    private void logout() throws IOException {
+        req.getSession().removeAttribute("user");
+        res.println("See ya!");
     }
 
-    private void getDetails(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        User user = rw.getCurrentUser();
-        res.getWriter().println(user.toString());
+    private void getDetails() throws IOException {
+        User user = req.getCurrentUser();
+        res.println(user.toString());
     }
 }

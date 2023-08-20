@@ -4,21 +4,27 @@ import db.UserDB;
 import org.javalite.activejdbc.Base;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static controller.Route.ProtectedRoute.NONE;
+
+@WebServlet(value = "/")
 public class BaseServlet extends HttpServlet {
 
     String basePath;
     List<Route> routes;
 
-    RequestWrapper rw;
+    RequestWrapper req;
+    ResponseWrapper res;
 
     public BaseServlet() {}
 
@@ -28,52 +34,58 @@ public class BaseServlet extends HttpServlet {
     }
 
     @Override
-    public void service(HttpServletRequest req, HttpServletResponse res)
+    public void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        final String path = getRequestedPath(rw.getRequestURL(), basePath);
+        req = new RequestWrapper(request);
+        res = new ResponseWrapper(response);
 
-        rw = new RequestWrapper(req);
+        final String path = getRequestedPath(req.getRequestURL(), basePath);
 
-        res.setContentType("application/json");
+        if (routes == null) routes = new ArrayList<>();
 
-        Route r =
-                routes.stream()
-                        .filter(e -> Objects.equals(e.path, path))
-                        .findFirst()
-                        .orElse(new Route("", this::fallback, Route.ProtectedRoute.NONE));
+        Route r = path.equals("/")
+                ? new Route("", this::root, NONE)
+                : routes.stream()
+                .filter(e -> Objects.equals(e.path, path))
+                .findFirst()
+                .orElse(new Route("", this::fallback, NONE));
 
         switch (r.protectedRoute) {
             case LOGGED_IN -> {
-                if (rw.isLoggedOut()) {
+                if (req.isLoggedOut()) {
                     res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are not logged in!");
                     return;
                 }
             }
             case LOGGED_OUT -> {
-                if (rw.isLoggedIn()) {
+                if (req.isLoggedIn()) {
                     res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are already logged in!");
                     return;
                 }
             }
             case NONE -> {
-                if (rw.isLoggedOut() && !rw.isGuest()) {
-                    rw.getSession().setAttribute("user", new UserDB().createGuest());
+                if (req.isLoggedOut() && !req.isGuest()) {
+                    req.getSession().setAttribute("user", new UserDB().createGuest());
                 }
             }
             case ADMIN -> {
-                if (!rw.getCurrentUser().getBoolean("isAdmin")) {
+                if (!req.getCurrentUser().getBoolean("isAdmin")) {
                     res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are not an admin!");
                 }
             }
         }
 
         Base.open("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:cartcrafters", "sa", "");
-        r.call(req, res);
+        r.call();
         Base.close();
     }
 
-    private void fallback(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    private void fallback() throws IOException {
         res.sendError(HttpServletResponse.SC_NOT_FOUND, "Bad endpoint!");
+    }
+
+    private void root() throws IOException {
+        res.println("Welcome to the CartCrafters API!");
     }
 
     public static String getRequestedPath(StringBuffer url, String basePath) throws MalformedURLException {

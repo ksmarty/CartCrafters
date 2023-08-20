@@ -1,7 +1,5 @@
 package controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class Route {
@@ -22,7 +20,7 @@ public class Route {
         this.protectedRoute = protectedRoute;
     }
 
-    public void call(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        method.f(req, res);
+    public void call() throws IOException {
+        method.f();
     }
 }

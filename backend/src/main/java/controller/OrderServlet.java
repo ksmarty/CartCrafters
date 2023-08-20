@@ -7,7 +7,6 @@ import model.OrderItem;
 import model.User;
 
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
@@ -29,15 +28,15 @@ public class OrderServlet extends BaseServlet {
     }
 
 
-    private void getOrders(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        User user = rw.getCurrentUser();
+    private void getOrders() throws IOException {
+        User user = req.getCurrentUser();
         OrderDAO odb = new OrderDB();
         List<Order> orders = odb.getUserOrders(user);
-        res.getWriter().println(odb.toJSON(orders));
+        res.println(odb.toJSON(orders));
     }
 
-    private void getOrderItems(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String orderNumber = rw.getParameter("order");
+    private void getOrderItems() throws IOException {
+        final String orderNumber = req.getParameter("order");
 
         try {
             Integer.parseInt(orderNumber);
@@ -46,7 +45,7 @@ public class OrderServlet extends BaseServlet {
             return;
         }
 
-        User user = rw.getCurrentUser();
+        User user = req.getCurrentUser();
         OrderDAO odb = new OrderDB();
 
         Order order = odb.getUserOrder(user, orderNumber);
@@ -57,16 +56,16 @@ public class OrderServlet extends BaseServlet {
         }
 
         List<OrderItem> orderItems = odb.getOrderItems(order);
-        res.getWriter().println(odb.toJSON(orderItems));
+        res.println(odb.toJSON(orderItems));
     }
 
-    private void getAllOrders(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    private void getAllOrders() throws IOException {
         OrderDAO odb = new OrderDB();
-        res.getWriter().println(odb.toJSON(odb.getAllOrders()));
+        res.println(odb.toJSON(odb.getAllOrders()));
     }
 
-    private void getOrderItemsAdmin(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String orderNumber = rw.getParameter("order");
+    private void getOrderItemsAdmin() throws IOException {
+        final String orderNumber = req.getParameter("order");
 
         try {
             Integer.parseInt(orderNumber);
@@ -85,6 +84,6 @@ public class OrderServlet extends BaseServlet {
         }
 
         List<OrderItem> orderItems = odb.getOrderItems(order);
-        res.getWriter().println(odb.toJSON(orderItems));
+        res.println(odb.toJSON(orderItems));
     }
 }

@@ -8,7 +8,6 @@ import model.Cart;
 import model.Order;
 
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
@@ -29,17 +28,17 @@ public class CartServlet extends BaseServlet {
                 ));
     }
 
-    private void checkout(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String ccNumber = rw.getParameter("ccNumber");
-        final String ccExpiryMonth = rw.getParameter("ccExpiryMonth");
-        final String ccExpiryYear = rw.getParameter("ccExpiryYear");
-        final String ccCVV = rw.getParameter("ccCVV");
+    private void checkout() throws IOException {
+        final String ccNumber = req.getParameter("ccNumber");
+        final String ccExpiryMonth = req.getParameter("ccExpiryMonth");
+        final String ccExpiryYear = req.getParameter("ccExpiryYear");
+        final String ccCVV = req.getParameter("ccCVV");
 
-        final String shippingAddress = rw.getParameter("shippingAddress");
-        final String shippingName = rw.getParameter("shippingName");
+        final String shippingAddress = req.getParameter("shippingAddress");
+        final String shippingName = req.getParameter("shippingName");
 
         CartDAO cartDB = new CartDB();
-        Cart cart = cartDB.getCart(rw.getCurrentUser());
+        Cart cart = cartDB.getCart(req.getCurrentUser());
 
         Order order = new OrderDB().create(cart);
 
@@ -51,15 +50,15 @@ public class CartServlet extends BaseServlet {
         // Add payment logic here
         // https://www.fakepay.io/
 
-        res.getWriter().println(order.toJson(true));
+        res.println(order.toJson(true));
     }
 
 
-    public void upsertItem(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String path = getRequestedPath(rw.getRequestURL(), basePath);
+    public void upsertItem() throws IOException {
+        final String path = getRequestedPath(req.getRequestURL(), basePath);
 
-        final String item = rw.getParameter("item");
-        final String quantityRaw = rw.getParameter("qty");
+        final String item = req.getParameter("item");
+        final String quantityRaw = req.getParameter("qty");
 
         if (item == null || quantityRaw == null) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Item and/or quantity is missing!");
@@ -75,18 +74,18 @@ public class CartServlet extends BaseServlet {
         }
 
         CartDAO cartDB = new CartDB();
-        Cart cart = cartDB.getCart(rw.getCurrentUser());
+        Cart cart = cartDB.getCart(req.getCurrentUser());
 
         if (path.equals("add"))
             cartDB.addItem(cart, item, quantity);
         else
             cartDB.updateQuantity(cart, item, quantity);
 
-        res.getWriter().println(cartDB.getItems(cart).toJson(true));
+        res.println(cartDB.getItems(cart).toJson(true));
     }
 
-    public void removeItem(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String item = rw.getParameter("item");
+    public void removeItem() throws IOException {
+        final String item = req.getParameter("item");
 
         if (item == null) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Item is missing!");
@@ -94,7 +93,7 @@ public class CartServlet extends BaseServlet {
         }
 
         CartDAO cartDB = new CartDB();
-        Cart cart = cartDB.getCart(rw.getCurrentUser());
+        Cart cart = cartDB.getCart(req.getCurrentUser());
         boolean removed = cartDB.removeItem(cart, item);
 
         if (!removed) {
@@ -102,12 +101,12 @@ public class CartServlet extends BaseServlet {
             return;
         }
 
-        res.getWriter().println(cartDB.getItems(cart).toJson(true));
+        res.println(cartDB.getItems(cart).toJson(true));
     }
 
-    public void getItems(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    public void getItems() throws IOException {
         CartDAO cartDB = new CartDB();
-        Cart cart = cartDB.getCart(rw.getCurrentUser());
-        res.getWriter().println(cartDB.getItems(cart).toJson(true));
+        Cart cart = cartDB.getCart(req.getCurrentUser());
+        res.println(cartDB.getItems(cart).toJson(true));
     }
 }

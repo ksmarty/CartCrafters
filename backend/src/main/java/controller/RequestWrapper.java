@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 public class RequestWrapper {
-    HttpServletRequest req;
+    private final HttpServletRequest req;
 
     public RequestWrapper(HttpServletRequest req) {
         this.req = req;
