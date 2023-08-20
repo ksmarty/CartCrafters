@@ -5,16 +5,18 @@ import model.CartItem;
 import model.User;
 import org.javalite.activejdbc.LazyList;
 
+import java.util.Optional;
+
 public interface CartDAO {
     LazyList<CartItem> getItems(Cart cart);
 
     Cart getCart(User user);
 
-    CartItem getItem(Cart cart, String itemId);
+    Optional<CartItem> getItem(Cart cart, String itemId);
 
     Double getTotal(Cart cart);
 
-    boolean addItem(Cart cart, String itemId, int quantity);
+    void addItem(Cart cart, String itemId, int quantity);
 
     boolean updateQuantity(Cart cart, String itemId, int quantity);
 
