@@ -22,14 +22,13 @@ public class CartDB implements CartDAO {
 
     @Override
     public Cart getCart(User user) {
-        return withDb(() -> {
-            Cart cart = Cart.findFirst("userId = ?", user.getId());
-            if (cart == null) {
-                cart = Cart.createIt();
-                user.add(cart);
-            }
-            return cart;
-        });
+        return withDb(() -> (Cart) Optional
+                .ofNullable(Cart.findFirst("userId = ?", user.getId()))
+                .orElseGet(() -> {
+                    Cart c = Cart.createIt();
+                    user.add(c);
+                    return c;
+                }));
     }
 
     @Override
