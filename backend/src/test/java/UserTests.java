@@ -82,4 +82,17 @@ public class UserTests {
             assertEquals(HttpServletResponse.SC_OK, response.code());
         }
     }
+
+    @Test
+    public void testSessions() throws IOException {
+        Response loginResponse = login();
+        assertEquals(HttpServletResponse.SC_OK, loginResponse.code());
+
+        // New session
+        createClient();
+
+        // Login will fail if session is preserved between clients
+        loginResponse = login();
+        assertEquals(HttpServletResponse.SC_OK, loginResponse.code());
+    }
 }
