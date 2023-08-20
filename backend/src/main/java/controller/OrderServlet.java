@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import static controller.Route.ProtectedRoute.ADMIN;
 import static controller.Route.ProtectedRoute.LOGGED_IN;
@@ -36,11 +37,9 @@ public class OrderServlet extends BaseServlet {
     }
 
     private void getOrderItems() throws IOException {
-        final String orderNumber = req.getParameter("order");
+        Optional<Integer> orderNumber = req.getParameterInt("order");
 
-        try {
-            Integer.parseInt(orderNumber);
-        } catch (NumberFormatException e) {
+        if (orderNumber.isEmpty()) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Order number is not valid!");
             return;
         }
@@ -48,7 +47,7 @@ public class OrderServlet extends BaseServlet {
         User user = req.getCurrentUser();
         OrderDAO odb = new OrderDB();
 
-        Order order = odb.getUserOrder(user, orderNumber);
+        Order order = odb.getUserOrder(user, orderNumber.get());
 
         if (order == null) {
             res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Order does not belong to user!");
@@ -65,18 +64,16 @@ public class OrderServlet extends BaseServlet {
     }
 
     private void getOrderItemsAdmin() throws IOException {
-        final String orderNumber = req.getParameter("order");
+        Optional<Integer> orderNumber = req.getParameterInt("order");
 
-        try {
-            Integer.parseInt(orderNumber);
-        } catch (NumberFormatException e) {
+        if (orderNumber.isEmpty()) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Order number is not valid!");
             return;
         }
 
         OrderDAO odb = new OrderDB();
 
-        Order order = odb.getOrder(orderNumber);
+        Order order = odb.getOrder(orderNumber.get());
 
         if (order == null) {
             res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Order does not exist!");

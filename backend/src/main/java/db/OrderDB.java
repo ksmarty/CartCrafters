@@ -59,12 +59,12 @@ public class OrderDB implements OrderDAO {
     }
 
     @Override
-    public Order getUserOrder(User user, String orderId) {
+    public Order getUserOrder(User user, int orderId) {
         return withDb(() -> user.get(Order.class, "orderId = ?", orderId).stream().findFirst().orElse(null));
     }
 
     @Override
-    public Order getOrder(String orderId) {
+    public Order getOrder(int orderId) {
         return withDb(() -> Order.findById(orderId));
     }
 

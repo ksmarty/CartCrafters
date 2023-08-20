@@ -11,9 +11,9 @@ import java.util.List;
 public interface OrderDAO {
     Order create(Cart cart);
 
-    Order getUserOrder(User user, String orderId);
+    Order getUserOrder(User user, int orderId);
 
-    Order getOrder(String orderId);
+    Order getOrder(int orderId);
 
     List<Order> getUserOrders(User user);
 
