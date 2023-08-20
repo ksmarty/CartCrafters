@@ -14,7 +14,8 @@ public class ResponseWrapper {
     }
 
     public void sendError(int code, String message) throws IOException {
-        res.sendError(code, message);
+        res.setStatus(code);
+        println(String.format("{\"error\": \"%s\"}", message));
     }
 
     public void println(String message) throws IOException {
