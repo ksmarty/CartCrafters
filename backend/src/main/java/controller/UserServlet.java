@@ -26,8 +26,8 @@ public class UserServlet extends BaseServlet {
     }
 
     private void create(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String username = req.getParameter("username");
-        final String password = req.getParameter("password");
+        final String username = rw.getParameter("username");
+        final String password = rw.getParameter("password");
 
         if (username == null || password == null) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username and/or password is missing");
@@ -48,13 +48,13 @@ public class UserServlet extends BaseServlet {
             return;
         }
 
-        req.getSession().setAttribute("user", user);
+        rw.getSession().setAttribute("user", user);
         res.getWriter().printf("User '%s' created successfully!", user.getString("username"));
     }
 
     private void login(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String username = req.getParameter("username");
-        final String password = req.getParameter("password");
+        final String username = rw.getParameter("username");
+        final String password = rw.getParameter("password");
 
         UserDB udb = new UserDB();
 
@@ -63,18 +63,18 @@ public class UserServlet extends BaseServlet {
             return;
         }
 
-        req.getSession().setAttribute("user", udb.getByUsername(username));
+        rw.getSession().setAttribute("user", udb.getByUsername(username));
         res.getWriter().printf("Welcome back %s!", username);
-        req.getSession().getId();
+        rw.getSession().getId();
     }
 
     private void logout(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        req.getSession().removeAttribute("user");
+        rw.getSession().removeAttribute("user");
         res.getWriter().println("See ya!");
     }
 
     private void getDetails(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        User user = (User) req.getSession().getAttribute("user");
+        User user = rw.getCurrentUser();
         res.getWriter().println(user.toString());
     }
 }

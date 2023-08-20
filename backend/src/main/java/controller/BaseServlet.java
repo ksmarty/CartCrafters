@@ -1,7 +1,6 @@
 package controller;
 
 import db.UserDB;
-import model.User;
 import org.javalite.activejdbc.Base;
 
 import javax.servlet.ServletException;
@@ -19,6 +18,8 @@ public class BaseServlet extends HttpServlet {
     String basePath;
     List<Route> routes;
 
+    RequestWrapper rw;
+
     public BaseServlet() {}
 
     public void addPaths(String basePath, List<Route> routes) {
@@ -29,7 +30,9 @@ public class BaseServlet extends HttpServlet {
     @Override
     public void service(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        final String path = getRequestedPath(req.getRequestURL(), basePath);
+        final String path = getRequestedPath(rw.getRequestURL(), basePath);
+
+        rw = new RequestWrapper(req);
 
         res.setContentType("application/json");
 
@@ -41,24 +44,24 @@ public class BaseServlet extends HttpServlet {
 
         switch (r.protectedRoute) {
             case LOGGED_IN -> {
-                if (isLoggedOut(req)) {
+                if (rw.isLoggedOut()) {
                     res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are not logged in!");
                     return;
                 }
             }
             case LOGGED_OUT -> {
-                if (isLoggedIn(req)) {
+                if (rw.isLoggedIn()) {
                     res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are already logged in!");
                     return;
                 }
             }
             case NONE -> {
-                if (isLoggedOut(req) && !isGuest(req)) {
-                    req.getSession().setAttribute("user", new UserDB().createGuest());
+                if (rw.isLoggedOut() && !rw.isGuest()) {
+                    rw.getSession().setAttribute("user", new UserDB().createGuest());
                 }
             }
             case ADMIN -> {
-                if (!getCurrentUser(req).getBoolean("isAdmin")) {
+                if (!rw.getCurrentUser().getBoolean("isAdmin")) {
                     res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are not an admin!");
                 }
             }
@@ -75,23 +78,5 @@ public class BaseServlet extends HttpServlet {
 
     public static String getRequestedPath(StringBuffer url, String basePath) throws MalformedURLException {
         return new URL(url.toString()).getPath().replace(String.format("/%s/", basePath), "");
-    }
-
-    public static boolean isLoggedIn(HttpServletRequest req) {
-        User user = getCurrentUser(req);
-        return (user != null && !user.getBoolean("isGuest"));
-    }
-
-    public static boolean isLoggedOut(HttpServletRequest req) {
-        return !isLoggedIn(req);
-    }
-
-    public static boolean isGuest(HttpServletRequest req) {
-        User user = getCurrentUser(req);
-        return (user != null && user.getBoolean("isGuest"));
-    }
-
-    public static User getCurrentUser(HttpServletRequest req) {
-        return (User) req.getSession().getAttribute("user");
     }
 }

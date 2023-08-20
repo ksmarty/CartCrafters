@@ -30,16 +30,16 @@ public class CartServlet extends BaseServlet {
     }
 
     private void checkout(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String ccNumber = req.getParameter("ccNumber");
-        final String ccExpiryMonth = req.getParameter("ccExpiryMonth");
-        final String ccExpiryYear = req.getParameter("ccExpiryYear");
-        final String ccCVV = req.getParameter("ccCVV");
+        final String ccNumber = rw.getParameter("ccNumber");
+        final String ccExpiryMonth = rw.getParameter("ccExpiryMonth");
+        final String ccExpiryYear = rw.getParameter("ccExpiryYear");
+        final String ccCVV = rw.getParameter("ccCVV");
 
-        final String shippingAddress = req.getParameter("shippingAddress");
-        final String shippingName = req.getParameter("shippingName");
+        final String shippingAddress = rw.getParameter("shippingAddress");
+        final String shippingName = rw.getParameter("shippingName");
 
         CartDAO cartDB = new CartDB();
-        Cart cart = cartDB.getCart(getCurrentUser(req));
+        Cart cart = cartDB.getCart(rw.getCurrentUser());
 
         Order order = new OrderDB().create(cart);
 
@@ -56,10 +56,10 @@ public class CartServlet extends BaseServlet {
 
 
     public void upsertItem(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String path = getRequestedPath(req.getRequestURL(), basePath);
+        final String path = getRequestedPath(rw.getRequestURL(), basePath);
 
-        final String item = req.getParameter("item");
-        final String quantityRaw = req.getParameter("qty");
+        final String item = rw.getParameter("item");
+        final String quantityRaw = rw.getParameter("qty");
 
         if (item == null || quantityRaw == null) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Item and/or quantity is missing!");
@@ -75,7 +75,7 @@ public class CartServlet extends BaseServlet {
         }
 
         CartDAO cartDB = new CartDB();
-        Cart cart = cartDB.getCart(getCurrentUser(req));
+        Cart cart = cartDB.getCart(rw.getCurrentUser());
 
         if (path.equals("add"))
             cartDB.addItem(cart, item, quantity);
@@ -86,7 +86,7 @@ public class CartServlet extends BaseServlet {
     }
 
     public void removeItem(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String item = req.getParameter("item");
+        final String item = rw.getParameter("item");
 
         if (item == null) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Item is missing!");
@@ -94,7 +94,7 @@ public class CartServlet extends BaseServlet {
         }
 
         CartDAO cartDB = new CartDB();
-        Cart cart = cartDB.getCart(getCurrentUser(req));
+        Cart cart = cartDB.getCart(rw.getCurrentUser());
         boolean removed = cartDB.removeItem(cart, item);
 
         if (!removed) {
@@ -107,7 +107,7 @@ public class CartServlet extends BaseServlet {
 
     public void getItems(HttpServletRequest req, HttpServletResponse res) throws IOException {
         CartDAO cartDB = new CartDB();
-        Cart cart = cartDB.getCart(getCurrentUser(req));
+        Cart cart = cartDB.getCart(rw.getCurrentUser());
         res.getWriter().println(cartDB.getItems(cart).toJson(true));
     }
 }

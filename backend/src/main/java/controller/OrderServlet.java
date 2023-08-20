@@ -30,14 +30,14 @@ public class OrderServlet extends BaseServlet {
 
 
     private void getOrders(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        User user = getCurrentUser(req);
+        User user = rw.getCurrentUser();
         OrderDAO odb = new OrderDB();
         List<Order> orders = odb.getUserOrders(user);
         res.getWriter().println(odb.toJSON(orders));
     }
 
     private void getOrderItems(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String orderNumber = req.getParameter("order");
+        final String orderNumber = rw.getParameter("order");
 
         try {
             Integer.parseInt(orderNumber);
@@ -46,7 +46,7 @@ public class OrderServlet extends BaseServlet {
             return;
         }
 
-        User user = getCurrentUser(req);
+        User user = rw.getCurrentUser();
         OrderDAO odb = new OrderDB();
 
         Order order = odb.getUserOrder(user, orderNumber);
@@ -66,7 +66,7 @@ public class OrderServlet extends BaseServlet {
     }
 
     private void getOrderItemsAdmin(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String orderNumber = req.getParameter("order");
+        final String orderNumber = rw.getParameter("order");
 
         try {
             Integer.parseInt(orderNumber);

@@ -39,14 +39,14 @@ public class ProductServlet extends BaseServlet {
     }
 
     public void getProduct(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String id = req.getParameter("id");
+        final String id = rw.getParameter("id");
 
         res.getWriter().println(new ProductDB().getProductById(id).toJson(true));
     }
 
     public void search(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String field = req.getParameter("field");
-        final String query = req.getParameter("q");
+        final String field = rw.getParameter("field");
+        final String query = rw.getParameter("q");
 
         ProductDAO pdb = new ProductDB();
 
