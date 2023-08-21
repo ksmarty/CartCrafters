@@ -60,10 +60,14 @@ public class UserServlet extends BaseServlet {
                                             res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Username and/or password is incorrect!");
                                             return;
                                         }
-
-                                        req.getSession().setAttribute("user", udb.getByUsername(username));
-                                        res.printf("Welcome back %s!", username);
-                                        req.getSession().getId();
+                                        udb.getByUsername(username).ifPresentOrElse(
+                                                user -> {
+                                                    req.getSession().setAttribute("user", user);
+                                                    res.printf("Welcome back %s!", username);
+                                                    req.getSession().getId();
+                                                },
+                                                () -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Username and/or password is incorrect!")
+                                        );
                                     },
                                     () -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Username and/or password is incorrect!"));
                         },
