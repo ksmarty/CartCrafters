@@ -58,26 +58,25 @@ public class CartServlet extends BaseServlet {
         final String path = getRequestedPath(req.getRequestURL(), basePath);
 
         req.getParameterInt("item").ifPresentOrElse(
-                item ->
-                        req.getParameterInt("qty").ifPresentOrElse(
-                                quantity -> {
-                                    CartDAO cartDB = new CartDB();
-                                    Cart cart = cartDB.getCart(req.getCurrentUser());
+                item -> req.getParameterInt("qty").ifPresentOrElse(
+                        quantity -> {
+                            CartDAO cartDB = new CartDB();
+                            Cart cart = cartDB.getCart(req.getCurrentUser());
 
-                                    if (path.equals("add"))
-                                        cartDB.addItem(cart, item, quantity);
-                                    else
-                                        cartDB.updateQuantity(cart, item, quantity);
+                            if (path.equals("add"))
+                                cartDB.addItem(cart, item, quantity);
+                            else
+                                cartDB.updateQuantity(cart, item, quantity);
 
-                                    res.println(cartDB.getItems(cart).toJson(true));
-                                },
-                                () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Quantity is missing or not a number!")),
+                            res.println(cartDB.getItems(cart).toJson(true));
+                        },
+                        () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Quantity is missing or not a number!")),
                 () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Item number is missing or not a number!"));
     }
 
     public void removeItem() {
         req.getParameterInt("item").ifPresentOrElse(
-                (item) -> {
+                item -> {
                     CartDAO cartDB = new CartDB();
                     Cart cart = cartDB.getCart(req.getCurrentUser());
                     boolean removed = cartDB.removeItem(cart, item);

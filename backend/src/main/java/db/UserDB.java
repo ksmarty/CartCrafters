@@ -10,8 +10,8 @@ import static org.javalite.activejdbc.Base.withDb;
 
 public class UserDB implements UserDAO {
     @Override
-    public User create(String username, String password) {
-        return withDb(() -> User.createIt("username", username, "password", SCryptUtil.scrypt(password, 16384, 8, 1)));
+    public Optional<User> create(String username, String password) {
+        return withDb(() -> Optional.ofNullable(User.createIt("username", username, "password", SCryptUtil.scrypt(password, 16384, 8, 1))));
     }
 
     @Override

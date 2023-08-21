@@ -43,8 +43,8 @@ public class ProductServlet extends BaseServlet {
 
     public void search() {
         req.getParameter("field").ifPresentOrElse(
-                (field) -> req.getParameter("q").ifPresentOrElse(
-                        (query) -> {
+                field -> req.getParameter("q").ifPresentOrElse(
+                        query -> {
                             ProductDAO pdb = new ProductDB();
 
                             switch (field) {

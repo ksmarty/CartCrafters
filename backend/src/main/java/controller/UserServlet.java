@@ -27,22 +27,22 @@ public class UserServlet extends BaseServlet {
         req.getParameter("username").ifPresentOrElse(
                 (username) ->
                         req.getParameter("password").ifPresentOrElse(
-                                (password) -> {
+                                password -> {
                                     UserDB udb = new UserDB();
 
                                     udb.getByUsername(username).ifPresentOrElse(
                                             user -> res.sendError(HttpServletResponse.SC_CONFLICT, String.format("User %s already exists!", username)),
-                                            () -> {
-                                                User user = udb.create(username, password);
+                                            () -> udb.create(username, password).ifPresent(
+                                                    user -> {
+                                                        if (user.hasErrors()) {
+                                                            res.sendError(HttpServletResponse.SC_BAD_REQUEST, user.errors().toString());
+                                                            return;
+                                                        }
 
-                                                if (user.hasErrors()) {
-                                                    res.sendError(HttpServletResponse.SC_BAD_REQUEST, user.errors().toString());
-                                                    return;
-                                                }
-
-                                                req.getSession().setAttribute("user", user);
-                                                res.printf("User '%s' created successfully!", user.getString("username"));
-                                            });
+                                                        req.getSession().setAttribute("user", user);
+                                                        res.printf("User '%s' created successfully!", user.getString("username"));
+                                                    }
+                                            ));
                                 },
                                 () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password is missing!")),
                 () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username is missing!"));
@@ -50,26 +50,24 @@ public class UserServlet extends BaseServlet {
 
     private void login() {
         req.getParameter("username").ifPresentOrElse(
-                username ->
-                        req.getParameter("password").ifPresentOrElse(
-                                password -> {
-                                    UserDB udb = new UserDB();
+                username -> req.getParameter("password").ifPresentOrElse(
+                        password -> {
+                            UserDB udb = new UserDB();
 
-                                    udb.checkPassword(username, password).ifPresentOrElse(
-                                            passwordIsValid -> {
-                                                if (!passwordIsValid) {
-                                                    res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Username and/or password is incorrect!");
-                                                    return;
-                                                }
+                            udb.checkPassword(username, password).ifPresentOrElse(
+                                    passwordIsValid -> {
+                                        if (!passwordIsValid) {
+                                            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Username and/or password is incorrect!");
+                                            return;
+                                        }
 
-                                                req.getSession().setAttribute("user", udb.getByUsername(username));
-                                                res.printf("Welcome back %s!", username);
-                                                req.getSession().getId();
-                                            },
-                                            () -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Username and/or password is incorrect!")
-                                    );
-                                },
-                                () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password is missing!")),
+                                        req.getSession().setAttribute("user", udb.getByUsername(username));
+                                        res.printf("Welcome back %s!", username);
+                                        req.getSession().getId();
+                                    },
+                                    () -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Username and/or password is incorrect!"));
+                        },
+                        () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password is missing!")),
                 () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username is missing!"));
     }
 

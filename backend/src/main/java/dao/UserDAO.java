@@ -5,7 +5,7 @@ import model.User;
 import java.util.Optional;
 
 public interface UserDAO {
-    User create(String username, String password);
+    Optional<User> create(String username, String password);
 
     User createGuest();
 

@@ -36,7 +36,7 @@ public class OrderServlet extends BaseServlet {
 
     private void getOrderItems() {
         req.getParameterInt("order").ifPresentOrElse(
-                (orderNumber) -> {
+                orderNumber -> {
                     OrderDAO odb = new OrderDB();
                     Order order = odb.getUserOrder(req.getCurrentUser(), orderNumber);
                     if (order == null) {
