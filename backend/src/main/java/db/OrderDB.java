@@ -7,6 +7,7 @@ import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.javalite.activejdbc.Base.withDb;
@@ -59,13 +60,13 @@ public class OrderDB implements OrderDAO {
     }
 
     @Override
-    public Order getUserOrder(User user, String orderId) {
+    public Order getUserOrder(User user, int orderId) {
         return withDb(() -> user.get(Order.class, "orderId = ?", orderId).stream().findFirst().orElse(null));
     }
 
     @Override
-    public Order getOrder(String orderId) {
-        return withDb(() -> Order.findById(orderId));
+    public Optional<Order> getOrder(int orderId) {
+        return withDb(() -> Optional.ofNullable(Order.findById(orderId)));
     }
 
     @Override
@@ -73,6 +74,7 @@ public class OrderDB implements OrderDAO {
         return withDb(() -> user.getAll(Order.class).load());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<OrderItem> getOrderItems(Order order) {
         return withDb(() -> order.getAll(OrderItem.class).include(Product.class));

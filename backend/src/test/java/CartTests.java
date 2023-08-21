@@ -194,7 +194,6 @@ public class CartTests {
 
         try (Response response = client.newCall(requestAdd).execute()) {
             assert response.body() != null;
-            System.out.println(response.body().string());
             JsonObject responseJSON = new Gson().fromJson(response.body().string(), JsonObject.class);
             assertEquals(659.95, responseJSON.get("totalamount").getAsDouble(), 0.01);
         }

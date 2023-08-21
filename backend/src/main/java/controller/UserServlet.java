@@ -4,9 +4,7 @@ import db.UserDB;
 import model.User;
 
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 import static controller.Route.ProtectedRoute.LOGGED_IN;
@@ -25,56 +23,65 @@ public class UserServlet extends BaseServlet {
         ));
     }
 
-    private void create(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String username = req.getParameter("username");
-        final String password = req.getParameter("password");
+    private void create() {
+        req.getParameter("username").ifPresentOrElse(
+                (username) ->
+                        req.getParameter("password").ifPresentOrElse(
+                                password -> {
+                                    UserDB udb = new UserDB();
 
-        if (username == null || password == null) {
-            res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username and/or password is missing");
-            return;
-        }
+                                    udb.getByUsername(username).ifPresentOrElse(
+                                            user -> res.sendError(HttpServletResponse.SC_CONFLICT, String.format("User %s already exists!", username)),
+                                            () -> udb.create(username, password).ifPresent(
+                                                    user -> {
+                                                        if (user.hasErrors()) {
+                                                            res.sendError(HttpServletResponse.SC_BAD_REQUEST, user.errors().toString());
+                                                            return;
+                                                        }
 
-        UserDB udb = new UserDB();
-
-        if (udb.getByUsername(username) != null) {
-            res.sendError(HttpServletResponse.SC_CONFLICT, String.format("User %s already exists!", username));
-            return;
-        }
-
-        User user = udb.create(username, password);
-
-        if (user.hasErrors()) {
-            res.sendError(HttpServletResponse.SC_BAD_REQUEST, user.errors().toString());
-            return;
-        }
-
-        req.getSession().setAttribute("user", user);
-        res.getWriter().printf("User '%s' created successfully!", user.getString("username"));
+                                                        req.getSession().setAttribute("user", user);
+                                                        res.printf("User '%s' created successfully!", user.getString("username"));
+                                                    }
+                                            ));
+                                },
+                                () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password is missing!")),
+                () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username is missing!"));
     }
 
-    private void login(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        final String username = req.getParameter("username");
-        final String password = req.getParameter("password");
+    private void login() {
+        req.getParameter("username").ifPresentOrElse(
+                username -> req.getParameter("password").ifPresentOrElse(
+                        password -> {
+                            UserDB udb = new UserDB();
 
-        UserDB udb = new UserDB();
-
-        if (!udb.checkPassword(username, password)) {
-            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Username and/or password is incorrect!");
-            return;
-        }
-
-        req.getSession().setAttribute("user", udb.getByUsername(username));
-        res.getWriter().printf("Welcome back %s!", username);
-        req.getSession().getId();
+                            udb.checkPassword(username, password).ifPresentOrElse(
+                                    passwordIsValid -> {
+                                        if (!passwordIsValid) {
+                                            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Username and/or password is incorrect!");
+                                            return;
+                                        }
+                                        udb.getByUsername(username).ifPresentOrElse(
+                                                user -> {
+                                                    req.getSession().setAttribute("user", user);
+                                                    res.printf("Welcome back %s!", username);
+                                                    req.getSession().getId();
+                                                },
+                                                () -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Username and/or password is incorrect!")
+                                        );
+                                    },
+                                    () -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Username and/or password is incorrect!"));
+                        },
+                        () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password is missing!")),
+                () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username is missing!"));
     }
 
-    private void logout(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    private void logout() {
         req.getSession().removeAttribute("user");
-        res.getWriter().println("See ya!");
+        res.println("See ya!");
     }
 
-    private void getDetails(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        User user = (User) req.getSession().getAttribute("user");
-        res.getWriter().println(user.toString());
+    private void getDetails() {
+        User user = req.getCurrentUser();
+        res.println(user.toString());
     }
 }

@@ -16,7 +16,7 @@ public interface ProductDAO {
 
     List<String> getBrands();
 
-    Product getProductById(String id);
+    Product getProductById(Integer id);
 
-    boolean updateStock(String productId, int quantity);
+    boolean updateStock(Integer productId, int quantity);
 }

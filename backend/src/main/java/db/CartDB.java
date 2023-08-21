@@ -6,11 +6,15 @@ import model.CartItem;
 import model.Product;
 import model.User;
 import org.javalite.activejdbc.LazyList;
+import org.javalite.activejdbc.Model;
+
+import java.util.Optional;
 
 import static org.javalite.activejdbc.Base.withDb;
 
 public class CartDB implements CartDAO {
 
+    @SuppressWarnings("unchecked")
     @Override
     public LazyList<CartItem> getItems(Cart cart) {
         return withDb(() -> cart.getAll(CartItem.class).include(Product.class));
@@ -18,19 +22,18 @@ public class CartDB implements CartDAO {
 
     @Override
     public Cart getCart(User user) {
-        return withDb(() -> {
-            Cart cart = Cart.findFirst("userId = ?", user.getId());
-            if (cart == null) {
-                cart = Cart.createIt();
-                user.add(cart);
-            }
-            return cart;
-        });
+        return withDb(() -> (Cart) Optional
+                .ofNullable(Cart.findFirst("userId = ?", user.getId()))
+                .orElseGet(() -> {
+                    Cart c = Cart.createIt();
+                    user.add(c);
+                    return c;
+                }));
     }
 
     @Override
-    public CartItem getItem(Cart cart, String itemId) {
-        return withDb(() -> cart.get(CartItem.class, "productId = ?", itemId).stream().findFirst().orElse(null));
+    public Optional<CartItem> getItem(Cart cart, Integer itemId) {
+        return withDb(() -> cart.get(CartItem.class, "productId = ?", itemId).stream().findFirst());
     }
 
     @Override
@@ -39,35 +42,30 @@ public class CartDB implements CartDAO {
     }
 
     @Override
-    public boolean addItem(Cart cart, String itemId, int quantity) {
-        return withDb(() -> {
-            CartItem cartItem = getItem(cart, itemId);
-            if (cartItem == null) {
-                cartItem = CartItem.createIt("productId", itemId, "quantity", quantity);
-                cart.add(cartItem);
-            } else
-                cartItem.set("quantity", cartItem.getInteger("quantity") + quantity).saveIt();
-            return cartItem != null;
+    public void addItem(Cart cart, Integer itemId, int quantity) {
+        withDb(() -> {
+            getItem(cart, itemId).ifPresentOrElse(
+                    e -> e.set("quantity", e.getInteger("quantity") + quantity).saveIt(),
+                    () -> cart.add(CartItem.createIt("productId", itemId, "quantity", quantity)));
+            return null;
         });
     }
 
     @Override
-    public boolean updateQuantity(Cart cart, String itemId, int quantity) {
+    public boolean updateQuantity(Cart cart, Integer itemId, int quantity) {
         if (quantity == 0) return removeItem(cart, itemId);
 
-        return withDb(() -> {
-            CartItem cartItem = getItem(cart, itemId);
-            if (cartItem == null) return false;
-            return cartItem.set("quantity", quantity).saveIt();
-        });
+        return withDb(() -> getItem(cart, itemId)
+                .map(item -> item.set("quantity", quantity).saveIt())
+                .orElse(false)
+        );
     }
 
     @Override
-    public boolean removeItem(Cart cart, String itemId) {
-        return withDb(() -> {
-            CartItem cartItem = getItem(cart, itemId);
-            if (cartItem == null) return false;
-            return cartItem.delete();
-        });
+    public boolean removeItem(Cart cart, Integer itemId) {
+        return withDb(() -> getItem(cart, itemId)
+                .map(Model::delete)
+                .orElse(false)
+        );
     }
 }

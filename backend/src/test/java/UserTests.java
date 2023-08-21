@@ -6,6 +6,7 @@ import org.junit.Test;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.CookieManager;
+import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 
@@ -61,6 +62,7 @@ public class UserTests {
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
+            assert response.body() != null;
             System.out.println(response.body().string());
             assertEquals(HttpServletResponse.SC_OK, response.code());
         }
@@ -69,7 +71,7 @@ public class UserTests {
     @Test
     public void testCreateUser() throws IOException {
         RequestBody requestBody = new FormBody.Builder()
-                .add("username", "coolTestUser123")
+                .add("username", "coolTestUser" + (new Random().nextInt(1000)))
                 .add("password", "securePassw0rd")
                 .build();
 
@@ -81,5 +83,18 @@ public class UserTests {
         try (Response response = client.newCall(request).execute()) {
             assertEquals(HttpServletResponse.SC_OK, response.code());
         }
+    }
+
+    @Test
+    public void testSessions() throws IOException {
+        Response loginResponse = login();
+        assertEquals(HttpServletResponse.SC_OK, loginResponse.code());
+
+        // New session
+        createClient();
+
+        // Login will fail if session is preserved between clients
+        loginResponse = login();
+        assertEquals(HttpServletResponse.SC_OK, loginResponse.code());
     }
 }

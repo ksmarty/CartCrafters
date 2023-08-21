@@ -7,13 +7,14 @@ import model.User;
 import org.javalite.activejdbc.Model;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OrderDAO {
     Order create(Cart cart);
 
-    Order getUserOrder(User user, String orderId);
+    Order getUserOrder(User user, int orderId);
 
-    Order getOrder(String orderId);
+    Optional<Order> getOrder(int orderId);
 
     List<Order> getUserOrders(User user);
 
