@@ -6,7 +6,6 @@ import db.ProductDB;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 import static controller.Route.ProtectedRoute.NONE;
@@ -25,34 +24,36 @@ public class ProductServlet extends BaseServlet {
                 ));
     }
 
-    public void getAll() throws IOException {
+    public void getAll() {
         res.println(new ProductDB().getAll().toJson(true));
     }
 
-    public void getCategories() throws IOException {
+    public void getCategories() {
         res.println(new Gson().toJson(new ProductDB().getCategories()));
     }
 
-    public void getBrands() throws IOException {
+    public void getBrands() {
         res.println(new Gson().toJson(new ProductDB().getBrands()));
     }
 
-    public void getProduct() throws IOException {
-        final String id = req.getParameter("id");
-
-        res.println(new ProductDB().getProductById(id).toJson(true));
+    public void getProduct() {
+        req.getParameterInt("id").ifPresent(
+                (id) -> res.println(new ProductDB().getProductById(id).toJson(true)));
     }
 
-    public void search() throws IOException {
-        final String field = req.getParameter("field");
-        final String query = req.getParameter("q");
+    public void search() {
+        req.getParameter("field").ifPresentOrElse(
+                (field) -> req.getParameter("q").ifPresentOrElse(
+                        (query) -> {
+                            ProductDAO pdb = new ProductDB();
 
-        ProductDAO pdb = new ProductDB();
-
-        switch (field) {
-            case "category" -> res.println(pdb.getFromCategory(query).toJson(true));
-            case "brand" -> res.println(pdb.getFromBrand(query).toJson(true));
-            default -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid field name!");
-        }
+                            switch (field) {
+                                case "category" -> res.println(pdb.getFromCategory(query).toJson(true));
+                                case "brand" -> res.println(pdb.getFromBrand(query).toJson(true));
+                                default -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid field name!");
+                            }
+                        },
+                        () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Field is not present!")),
+                () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Field is not present!"));
     }
 }

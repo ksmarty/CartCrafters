@@ -12,13 +12,13 @@ public interface CartDAO {
 
     Cart getCart(User user);
 
-    Optional<CartItem> getItem(Cart cart, String itemId);
+    Optional<CartItem> getItem(Cart cart, Integer itemId);
 
     Double getTotal(Cart cart);
 
-    void addItem(Cart cart, String itemId, int quantity);
+    void addItem(Cart cart, Integer itemId, int quantity);
 
-    boolean updateQuantity(Cart cart, String itemId, int quantity);
+    boolean updateQuantity(Cart cart, Integer itemId, int quantity);
 
-    boolean removeItem(Cart cart, String itemId);
+    boolean removeItem(Cart cart, Integer itemId);
 }

@@ -36,12 +36,12 @@ public class ProductDB implements ProductDAO {
     }
 
     @Override
-    public Product getProductById(String id) {
+    public Product getProductById(Integer id) {
         return withDb(() -> Product.findFirst("productId = ?", id));
     }
 
     @Override
-    public boolean updateStock(String productId, int quantity) {
+    public boolean updateStock(Integer productId, int quantity) {
         return withDb(() -> getProductById(productId).setInteger("stock", quantity).saveIt());
     }
 

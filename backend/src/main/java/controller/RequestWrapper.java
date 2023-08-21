@@ -31,8 +31,8 @@ public class RequestWrapper {
         return (User) getSession().getAttribute("user");
     }
 
-    public String getParameter(String query) {
-        return req.getParameter(query);
+    public Optional<String> getParameter(String query) {
+        return Optional.ofNullable(req.getParameter(query));
     }
 
     public Optional<Integer> getParameterInt(String query) {

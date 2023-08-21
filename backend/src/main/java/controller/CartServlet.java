@@ -28,14 +28,14 @@ public class CartServlet extends BaseServlet {
                 ));
     }
 
-    private void checkout() throws IOException {
-        final String ccNumber = req.getParameter("ccNumber");
-        final String ccExpiryMonth = req.getParameter("ccExpiryMonth");
-        final String ccExpiryYear = req.getParameter("ccExpiryYear");
-        final String ccCVV = req.getParameter("ccCVV");
+    private void checkout() {
+        final String ccNumber = req.getParameter("ccNumber").orElse("");
+        final String ccExpiryMonth = req.getParameter("ccExpiryMonth").orElse("");
+        final String ccExpiryYear = req.getParameter("ccExpiryYear").orElse("");
+        final String ccCVV = req.getParameter("ccCVV").orElse("");
 
-        final String shippingAddress = req.getParameter("shippingAddress");
-        final String shippingName = req.getParameter("shippingName");
+        final String shippingAddress = req.getParameter("shippingAddress").orElse("");
+        final String shippingName = req.getParameter("shippingName").orElse("");
 
         CartDAO cartDB = new CartDB();
         Cart cart = cartDB.getCart(req.getCurrentUser());
@@ -57,54 +57,42 @@ public class CartServlet extends BaseServlet {
     public void upsertItem() throws IOException {
         final String path = getRequestedPath(req.getRequestURL(), basePath);
 
-        final String item = req.getParameter("item");
-        final String quantityRaw = req.getParameter("qty");
+        req.getParameterInt("item").ifPresentOrElse(
+                item ->
+                        req.getParameterInt("qty").ifPresentOrElse(
+                                quantity -> {
+                                    CartDAO cartDB = new CartDB();
+                                    Cart cart = cartDB.getCart(req.getCurrentUser());
 
-        if (item == null || quantityRaw == null) {
-            res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Item and/or quantity is missing!");
-            return;
-        }
+                                    if (path.equals("add"))
+                                        cartDB.addItem(cart, item, quantity);
+                                    else
+                                        cartDB.updateQuantity(cart, item, quantity);
 
-        int quantity;
-        try {
-            quantity = Integer.parseInt(quantityRaw);
-        } catch (NumberFormatException e) {
-            res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Quantity value is invalid!");
-            return;
-        }
-
-        CartDAO cartDB = new CartDB();
-        Cart cart = cartDB.getCart(req.getCurrentUser());
-
-        if (path.equals("add"))
-            cartDB.addItem(cart, item, quantity);
-        else
-            cartDB.updateQuantity(cart, item, quantity);
-
-        res.println(cartDB.getItems(cart).toJson(true));
+                                    res.println(cartDB.getItems(cart).toJson(true));
+                                },
+                                () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Quantity is missing or not a number!")),
+                () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Item number is missing or not a number!"));
     }
 
-    public void removeItem() throws IOException {
-        final String item = req.getParameter("item");
+    public void removeItem() {
+        req.getParameterInt("item").ifPresentOrElse(
+                (item) -> {
+                    CartDAO cartDB = new CartDB();
+                    Cart cart = cartDB.getCart(req.getCurrentUser());
+                    boolean removed = cartDB.removeItem(cart, item);
 
-        if (item == null) {
-            res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Item is missing!");
-            return;
-        }
+                    if (!removed) {
+                        res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Item not found in cart!");
+                        return;
+                    }
 
-        CartDAO cartDB = new CartDB();
-        Cart cart = cartDB.getCart(req.getCurrentUser());
-        boolean removed = cartDB.removeItem(cart, item);
-
-        if (!removed) {
-            res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Item not found in cart!");
-            return;
-        }
-
-        res.println(cartDB.getItems(cart).toJson(true));
+                    res.println(cartDB.getItems(cart).toJson(true));
+                },
+                () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Item is missing or not a number!"));
     }
 
-    public void getItems() throws IOException {
+    public void getItems() {
         CartDAO cartDB = new CartDB();
         Cart cart = cartDB.getCart(req.getCurrentUser());
         res.println(cartDB.getItems(cart).toJson(true));

@@ -2,6 +2,8 @@ package dao;
 
 import model.User;
 
+import java.util.Optional;
+
 public interface UserDAO {
     User create(String username, String password);
 
@@ -11,7 +13,7 @@ public interface UserDAO {
 
     User getById(int id);
 
-    User getByUsername(String username);
+    Optional<User> getByUsername(String username);
 
-    Boolean checkPassword(String username, String password);
+    Optional<Boolean> checkPassword(String username, String password);
 }

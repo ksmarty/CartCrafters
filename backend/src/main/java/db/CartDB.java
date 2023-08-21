@@ -32,7 +32,7 @@ public class CartDB implements CartDAO {
     }
 
     @Override
-    public Optional<CartItem> getItem(Cart cart, String itemId) {
+    public Optional<CartItem> getItem(Cart cart, Integer itemId) {
         return withDb(() -> cart.get(CartItem.class, "productId = ?", itemId).stream().findFirst());
     }
 
@@ -42,7 +42,7 @@ public class CartDB implements CartDAO {
     }
 
     @Override
-    public void addItem(Cart cart, String itemId, int quantity) {
+    public void addItem(Cart cart, Integer itemId, int quantity) {
         withDb(() -> {
             getItem(cart, itemId).ifPresentOrElse(
                     e -> e.set("quantity", e.getInteger("quantity") + quantity).saveIt(),
@@ -52,7 +52,7 @@ public class CartDB implements CartDAO {
     }
 
     @Override
-    public boolean updateQuantity(Cart cart, String itemId, int quantity) {
+    public boolean updateQuantity(Cart cart, Integer itemId, int quantity) {
         if (quantity == 0) return removeItem(cart, itemId);
 
         return withDb(() -> getItem(cart, itemId)
@@ -62,7 +62,7 @@ public class CartDB implements CartDAO {
     }
 
     @Override
-    public boolean removeItem(Cart cart, String itemId) {
+    public boolean removeItem(Cart cart, Integer itemId) {
         return withDb(() -> getItem(cart, itemId)
                 .map(Model::delete)
                 .orElse(false)

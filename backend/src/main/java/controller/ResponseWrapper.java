@@ -13,20 +13,32 @@ public class ResponseWrapper {
         this.res = res;
     }
 
-    public void sendError(int code, String message) throws IOException {
+    public void sendError(int code, String message) {
         res.setStatus(code);
         println(String.format("{\"error\": \"%s\"}", message));
     }
 
-    public void println(String message) throws IOException {
-        res.getWriter().println(message);
+    public void println(String message) {
+        try {
+            res.getWriter().println(message);
+        } catch (IOException e) {
+            // Shhh nothing happened dw about it
+        }
     }
 
-    public void println(Object obj) throws IOException {
-        res.getWriter().println(obj);
+    public void println(Object obj) {
+        try {
+            res.getWriter().println(obj);
+        } catch (IOException e) {
+            // Shhh nothing happened dw about it
+        }
     }
 
-    public void printf(String format, Object... args) throws IOException {
-        res.getWriter().printf(format, args);
+    public void printf(String format, Object... args) {
+        try {
+            res.getWriter().printf(format, args);
+        } catch (IOException e) {
+            // Shhh nothing happened dw about it
+        }
     }
 }

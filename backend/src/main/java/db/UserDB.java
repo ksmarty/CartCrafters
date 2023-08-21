@@ -4,6 +4,8 @@ import com.lambdaworks.crypto.SCryptUtil;
 import dao.UserDAO;
 import model.User;
 
+import java.util.Optional;
+
 import static org.javalite.activejdbc.Base.withDb;
 
 public class UserDB implements UserDAO {
@@ -23,14 +25,14 @@ public class UserDB implements UserDAO {
     }
 
     @Override
-    public User getByUsername(String username) {
-        return withDb(() -> User.findFirst("username = ?", username));
+    public Optional<User> getByUsername(String username) {
+        return withDb(() -> Optional.ofNullable(User.findFirst("username = ?", username)));
     }
 
     @Override
-    public Boolean checkPassword(String username, String password) {
-        String storedPassword = getByUsername(username).getString("password");
-        return storedPassword != null && SCryptUtil.check(password, storedPassword);
+    public Optional<Boolean> checkPassword(String username, String password) {
+        return getByUsername(username).map(
+                user -> SCryptUtil.check(password, user.getString("password")));
     }
 
     @Override
