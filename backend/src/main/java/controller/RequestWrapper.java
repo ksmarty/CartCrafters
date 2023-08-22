@@ -2,8 +2,11 @@ package controller;
 
 import model.User;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
+import java.io.IOException;
 import java.util.Optional;
 
 public class RequestWrapper {
@@ -51,5 +54,13 @@ public class RequestWrapper {
 
     public StringBuffer getRequestURL() {
         return req.getRequestURL();
+    }
+
+    public Optional<Part> getPart(String part) {
+        try {
+            return Optional.ofNullable(req.getPart(part));
+        } catch (IOException | ServletException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

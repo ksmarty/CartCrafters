@@ -2,6 +2,7 @@ package controller;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 
 public class ResponseWrapper {
 
@@ -38,6 +39,19 @@ public class ResponseWrapper {
         try {
             res.getWriter().printf(format, args);
         } catch (IOException e) {
+            // Shhh nothing happened dw about it
+        }
+    }
+
+    public void setContentType(String contentType) {
+        res.setContentType(contentType);
+    }
+
+    public OutputStream getOutputStream() {
+        try {
+            return res.getOutputStream();
+        } catch (IOException e) {
+            return null;
             // Shhh nothing happened dw about it
         }
     }

@@ -71,6 +71,7 @@ public class BaseServlet extends HttpServlet {
             case ADMIN -> {
                 if (!req.getCurrentUser().getBoolean("isAdmin")) {
                     res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are not an admin!");
+                    return;
                 }
             }
         }
@@ -80,11 +81,11 @@ public class BaseServlet extends HttpServlet {
         Base.close();
     }
 
-    private void fallback() throws IOException {
+    private void fallback() {
         res.sendError(HttpServletResponse.SC_NOT_FOUND, "Bad endpoint!");
     }
 
-    private void root() throws IOException {
+    private void root() {
         res.println("Welcome to the CartCrafters API!");
     }
 
