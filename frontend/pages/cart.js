@@ -6,6 +6,12 @@ const Cart = () => {
 
   const totalPrice = cart.reduce((total, item) => total + item.price, 0);
 
+  const removeItem = (index) => {
+    const newCart = [...cart];
+    newCart.splice(index, 1);
+    setCart(newCart);
+  }
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Shopping Cart</h1>
@@ -23,6 +29,9 @@ const Cart = () => {
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Brand
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Remove
             </th>
           </tr>
         </thead>
@@ -43,6 +52,11 @@ const Cart = () => {
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-gray-900">{item.brand}</div>
               </td>
+              <td className="px-6 py-4 text-red-500 whitespace-nowrap">
+        <button onClick={() => removeItem(i)}>
+         Remove Item
+        </button>
+      </td>
             </tr>
           ))}
         </tbody>

@@ -1,4 +1,5 @@
-import React from "react"
+import React, { useState, useContext, useEffect } from 'react';
+
 import { useRouter } from "next/router" 
 import Transition from "./Transition" 
 
@@ -9,12 +10,34 @@ import Head from 'next/head'
 import Back from "./Back"
 
 
-import { ShoppingCartProvider } from './ShoppingCartContext';
+import { ShoppingCartContext, ShoppingCartProvider } from '../components/ShoppingCartContext.js';
+
+const Navbar = () => {
+
+  const { cart } = useContext(ShoppingCartContext);
+  const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+
+
+
+  return (
+      <nav className="w-full p-4 flex justify-between items-center bg-blue-500 text-white">
+      <Link href="/" className="hover:text-gray-200"><h1 className="text-lg font-bold">CartCrafters</h1></Link>
+      <div className="flex gap-4">
+        <Link href="/" className="hover:text-gray-200">Catalog</Link>
+        <Link href="/cart" className="hover:text-gray-200">Shopping Cart ({cart.length})</Link>
+        <Link href="/checkout" className="hover:text-gray-200">Checkout</Link>
+        <Link href="/register" className="hover:text-gray-200">Register</Link>
+        <Link href="/admin" className="hover:text-gray-200">Admin </Link>
+      </div>
+    </nav>
+  );
+
+}
+
 
 const Layout = ({ children }) => {
 
-
-
+  // Calculate the total number of items in the cart
 
   const router = useRouter() 
 
@@ -28,17 +51,7 @@ const Layout = ({ children }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
-      {/* Navbar component that doesn't animate */}
-      <nav className="w-full p-4 flex justify-between items-center bg-blue-500 text-white">
-      <Link href="/" className="hover:text-gray-200"><h1 className="text-lg font-bold">CartCrafters</h1></Link>
-      <div className="flex gap-4">
-        <Link href="/" className="hover:text-gray-200">Catalog</Link>
-        <Link href="/cart" className="hover:text-gray-200">Shopping Cart</Link>
-        <Link href="/checkout" className="hover:text-gray-200">Checkout</Link>
-        <Link href="/register" className="hover:text-gray-200">Register</Link>
-        <Link href="/admin" className="hover:text-gray-200">Admin </Link>
-      </div>
-    </nav>
+      <Navbar />
       <Transition location={router.pathname}>
         <main>{children}</main>
         

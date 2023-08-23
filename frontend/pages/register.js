@@ -9,27 +9,34 @@ const Register = () => {
     const handleSubmit = (event) => {
       event.preventDefault();
   
-      const url = `http://localhost:8080/user/create?username=${username}&password=${password}`;
+      const url = `http://localhost:8080/user/create`;
+  
+      // Format the body as form data
+      const formData = new URLSearchParams();
+      formData.append('username', username);
+      formData.append('password', password);
   
       fetch(url, {
-          method: 'PUT',
+          method: 'POST',
           headers: {
-              'Content-Type': 'application/json',
+              'Content-Type': 'application/x-www-form-urlencoded',
           },
+          body: formData.toString()
       })
       .then(response => {
+          // rest of the code...
           if (response.status === 200) {
-              alert(`User ${username} created successfully!`);
-              window.location.href = "/login";
-          } else if (response.status === 400) {
-              alert("Bad credentials");
-              window.location.reload();
-          } else if (response.status === 409) {
-              alert("User already exists");
-              window.location.reload();
-          } else {
-              throw new Error('Unexpected status code');
-          }
+            alert(`User ${username} created successfully!`);
+            window.location.href = "/login";
+        } else if (response.status === 400) {
+            alert("Bad credentials");
+            window.location.reload();
+        } else if (response.status === 409) {
+            alert("User already exists");
+            window.location.reload();
+        } else {
+            throw new Error('Unexpected status code');
+        }
       })
       .catch((error) => {
           console.log('Error:', error);

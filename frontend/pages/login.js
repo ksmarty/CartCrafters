@@ -4,6 +4,8 @@ import { useState, useContext } from 'react';
 
 import { ShoppingCartContext } from '../components/ShoppingCartContext';
 
+import { useRouter } from 'next/router';
+
 const Login = () => {
 
     const [username, setUsername] = useState('');
@@ -11,28 +13,50 @@ const Login = () => {
 
     const { setUser } = useContext(ShoppingCartContext);
 
+    const router = useRouter();
+
     const handleSubmit = (event) => {
       event.preventDefault();
-  
-      // Construct the URL with the username and password
-      const url = `http://localhost:8080/user/login?username=${username}&password=${password}`;
 
+      setUsername(username.trim());
+      setPassword(password.trim());
+
+  
+      if (!username) {
+        alert("Please enter a valid username!");
+        return
+      }
+
+      if (!password) {
+        alert("Please enter a valid password!")
+        return
+      }
+
+
+      // Construct the URL with the username and password
+      const url = `http://localhost:8080/user/login`;
+
+      // Format the body as form data
+      const formData = new URLSearchParams();
+      formData.append('username', username);
+      formData.append('password', password);
 
   
       fetch(url, {
-          method: 'PUT',
+          method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+              'Content-Type': 'application/x-www-form-urlencoded',
           },
+          body: formData.toString()
       })
       .then(response => {
         if (response.status === 200) {
             setUser(username);
             alert(`User successfully logged in`);
-            window.location.href = "/";
-        } else if (response.status === 400) {
+            router.push('/');
+        } else if (response.status === 400 || response.status === 401) {
             alert("Incorrect username and/or password");
-            window.location.reload();
+            router.reload();
         } else {
             throw new Error('Unexpected status code');
         }

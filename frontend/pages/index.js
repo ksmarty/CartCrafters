@@ -29,7 +29,7 @@ export default function Home({ children }) {
 
 
   useEffect(() => {
-    console.log(user.username);  // log the user's username
+    console.log(user);  // log the user's username
   }, []);
 
   const filteredItems = catalogueItems
@@ -49,6 +49,11 @@ export default function Home({ children }) {
     }
     return 0;
   });
+
+  const addToCart = (item) => {
+    setCart([...cart, item])
+    console.log(cart)
+  }
 
   const sortItems = (type) => {
     // Clone the current state
@@ -109,6 +114,9 @@ export default function Home({ children }) {
 
       <main className="flex flex-col items-center justify-start flex-1 text-center">
         <p className="mt-3 w-full md:text-2xl">Catalog</p>
+        <p className="mt-3 w-full md:text-xl">Welcome {user} </p>
+        <p className="mt-3 w-full md:text-xl">You have {cart.length} items in your cart</p>
+
 
         {/* Catalogue Items */}
         <div className="flex flex-wrap justify-center gap-4 p-4">
@@ -133,10 +141,7 @@ export default function Home({ children }) {
     <p className="mt-2">Brand: {item.brand}</p>
 
       {/* Add To Cart Button */}
-      <button onClick={() => {
-          setCart([...cart, item])
-          console.log(cart)
-          }} className="mt-2 bg-green-500 text-white px-4 py-2 rounded">
+      <button onClick={() => {addToCart(item)}} className="mt-2 bg-green-500 text-white px-4 py-2 rounded">
         Add to Cart
       </button>
     
