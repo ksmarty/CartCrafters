@@ -39,6 +39,10 @@ public class BaseServlet extends HttpServlet {
         req = new RequestWrapper(request);
         res = new ResponseWrapper(response);
 
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "*");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         final String path = getRequestedPath(req.getRequestURL(), basePath);
 
         if (routes == null) routes = new ArrayList<>();
