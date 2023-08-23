@@ -40,7 +40,7 @@ public class UserServlet extends BaseServlet {
                                                         }
 
                                                         req.getSession().setAttribute("user", user);
-                                                        res.printf("User '%s' created successfully!", user.getString("username"));
+                                                        res.sendResponse("User '%s' created successfully!", user.getString("username"));
                                                     }
                                             ));
                                 },
@@ -77,11 +77,11 @@ public class UserServlet extends BaseServlet {
 
     private void logout() {
         req.getSession().removeAttribute("user");
-        res.println("See ya!");
+        res.sendResponse("See ya!");
     }
 
     private void getDetails() {
         User user = req.getCurrentUser();
-        res.println(user.toString());
+        res.println(user.toJson(true));
     }
 }

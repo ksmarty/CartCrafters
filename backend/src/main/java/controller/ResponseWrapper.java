@@ -19,6 +19,14 @@ public class ResponseWrapper {
         println(String.format("{\"error\": \"%s\"}", message));
     }
 
+    public void sendResponse(String message) {
+        println(String.format("{\"message\": \"%s\"}", message));
+    }
+
+    public void sendResponse(String format, Object... args) {
+        printf(String.format("{\"message\": \"%s\"}", String.format(format, args)));
+    }
+
     public void println(String message) {
         try {
             res.getWriter().println(message);

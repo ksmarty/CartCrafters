@@ -90,7 +90,7 @@ public class BaseServlet extends HttpServlet {
     }
 
     private void root() {
-        res.println("Welcome to the CartCrafters API!");
+        res.sendResponse("Welcome to the CartCrafters API!");
     }
 
     public static String getRequestedPath(StringBuffer url, String basePath) throws MalformedURLException {
