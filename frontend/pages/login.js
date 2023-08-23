@@ -1,20 +1,48 @@
 import React from 'react'
 
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+
+import { ShoppingCartContext } from '../components/ShoppingCartContext';
 
 const Login = () => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+    const { setUser } = useContext(ShoppingCartContext);
+
     const handleSubmit = (event) => {
-        event.preventDefault();
-    
-        // Here you would typically handle the form submission,
-        // for example, send the form data to an API.
-    
-        console.log('Form submitted', { username, password });
-      };
+      event.preventDefault();
+  
+      // Construct the URL with the username and password
+      const url = `http://localhost:8080/user/login?username=${username}&password=${password}`;
+
+
+  
+      fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+      })
+      .then(response => {
+        if (response.status === 200) {
+            setUser(username);
+            alert(`User successfully logged in`);
+            window.location.href = "/";
+        } else if (response.status === 400) {
+            alert("Incorrect username and/or password");
+            window.location.reload();
+        } else {
+            throw new Error('Unexpected status code');
+        }
+    })
+    .catch((error) => {
+        console.log('Error:', error);
+    });
+  
+      console.log('Form submitted', { username, password });
+  };
 
       return (
         <div className="container mx-auto max-w-md">

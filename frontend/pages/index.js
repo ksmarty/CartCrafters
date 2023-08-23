@@ -1,10 +1,10 @@
 import Link from 'next/link'
 
-
+import React, { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/router'
 
-import { useState } from 'react';
-import { useContext} from 'react';
+
+
 
 import { ShoppingCartContext } from '../components/ShoppingCartContext.js';
 
@@ -26,6 +26,12 @@ export default function Home({ children }) {
   const [sortType, setSortType] = useState('price-asc');
 
   const [cart, setCart] = useContext(ShoppingCartContext);
+
+  const { user } = useContext(ShoppingCartContext);  // access user from ShoppingCartContext
+
+  useEffect(() => {
+    console.log(user.username);  // log the user's username
+  }, []);
 
   const filteredItems = catalogueItems
   .filter(item => {

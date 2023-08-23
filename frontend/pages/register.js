@@ -7,10 +7,36 @@ const Register = () => {
     const [password, setPassword] = useState('');
 
     const handleSubmit = (event) => {
-        event.preventDefault();
-
-        console.log('Form submitted', { username, password });
-    };
+      event.preventDefault();
+  
+      const url = `http://localhost:8080/user/create?username=${username}&password=${password}`;
+  
+      fetch(url, {
+          method: 'PUT',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+      })
+      .then(response => {
+          if (response.status === 200) {
+              alert(`User ${username} created successfully!`);
+              window.location.href = "/login";
+          } else if (response.status === 400) {
+              alert("Bad credentials");
+              window.location.reload();
+          } else if (response.status === 409) {
+              alert("User already exists");
+              window.location.reload();
+          } else {
+              throw new Error('Unexpected status code');
+          }
+      })
+      .catch((error) => {
+          console.log('Error:', error);
+      });
+  
+      console.log('Form submitted', { username, password });
+  };
 
     return (
         <div className="container mx-auto max-w-md">
