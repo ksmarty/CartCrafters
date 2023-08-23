@@ -12,12 +12,22 @@ export const ShoppingCartProvider = ({ children }) => {
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
+
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
+
   }, []);
 
   // Save the user to local storage whenever it changes
   useEffect(() => {
     localStorage.setItem('user', JSON.stringify(user));
   }, [user]);
+
+  useEffect(() => {
+    localStorage.setItem('cart',JSON.stringify(cart));
+  }, [cart])
 
   return (
     <ShoppingCartContext.Provider value={{ cart, setCart, user, setUser }}>
