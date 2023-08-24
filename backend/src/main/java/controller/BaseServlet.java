@@ -3,8 +3,7 @@ package controller;
 import db.UserDB;
 import org.javalite.activejdbc.Base;
 
-import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -50,13 +49,6 @@ public class BaseServlet extends HttpServlet {
             return;
         }
 
-        // response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000"); // Replace with your client's origin
-        // response.setHeader("Access-Control-Allow-Credentials", "true");
-        // response.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-        // response.setHeader("Access-Control-Allow-Headers", "Content-Type");
-        // // response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-        // // response.setHeader("Access-Control-Allow-Credentials", "true");
-
         final String path = getRequestedPath(req.getRequestURL(), basePath);
 
         if (routes == null) routes = new ArrayList<>();
@@ -97,18 +89,6 @@ public class BaseServlet extends HttpServlet {
         Base.open("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:cartcrafters", "sa", "");
         r.call();
         Base.close();
-    }
-
-    protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        setAccessControlHeaders(response);
-        response.setStatus(HttpServletResponse.SC_OK);
-    }
-
-    private void setAccessControlHeaders(HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000"); // Replace with your client's origin
-        response.setHeader("Access-Control-Allow-Credentials", "true");
-        response.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
     }
 
     private void fallback() {
