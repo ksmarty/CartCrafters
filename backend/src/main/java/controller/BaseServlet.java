@@ -39,9 +39,15 @@ public class BaseServlet extends HttpServlet {
         req = new RequestWrapper(request);
         res = new ResponseWrapper(response);
 
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "*");
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000"); // Replace with your client's origin
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
 
         final String path = getRequestedPath(req.getRequestURL(), basePath);
 
@@ -97,3 +103,5 @@ public class BaseServlet extends HttpServlet {
         return new URL(url.toString()).getPath().replace(String.format("/%s/", basePath), "");
     }
 }
+
+

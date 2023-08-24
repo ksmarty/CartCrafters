@@ -11,7 +11,7 @@ const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const { setUser } = useContext(ShoppingCartContext);
+    const {user, setUser } = useContext(ShoppingCartContext);
 
     const router = useRouter();
 
@@ -32,6 +32,12 @@ const Login = () => {
         return
       }
 
+      if (user != "guest") {
+        alert("You are already logged in!")
+        router.push('/');
+        return
+      }
+
 
       // Construct the URL with the username and password
       const url = `http://localhost:8080/user/login`;
@@ -47,7 +53,8 @@ const Login = () => {
           headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
           },
-          body: formData.toString()
+          body: formData.toString(),
+          credentials: 'include'
       })
       .then(response => {
         if (response.status === 200) {

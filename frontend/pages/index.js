@@ -9,10 +9,10 @@ import { useRouter } from 'next/router'
 import { ShoppingCartContext } from '../components/ShoppingCartContext.js';
 
 // Mock catalogue data
-const catalogueItems = [
-  { id: 1, name: 'Triangle', price: 50, category: 'Shape', brand: 'BrandA' },
-  { id: 2, name: 'Circle', price: 100, category: 'Shape', brand: 'BrandB' },
-  { id: 3, name: 'Square', price: 75, category: 'Shape', brand: 'BrandA' },
+ let catalogueItems = [
+//   { id: 1, name: 'Triangle', price: 50, category: 'Shape', brand: 'BrandA' },
+//   { id: 2, name: 'Circle', price: 100, category: 'Shape', brand: 'BrandB' },
+//   { id: 3, name: 'Square', price: 75, category: 'Shape', brand: 'BrandA' },
   // Add more items as needed
 ];
 
@@ -23,32 +23,72 @@ export default function Home({ children }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedBrand, setSelectedBrand] = useState('All');
 
+  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState([]);
+
   const [sortType, setSortType] = useState('price-asc');
 
   const { cart, setCart, user } = useContext(ShoppingCartContext);
 
+  const fetchProducts = () => {
+    const url = 'http://localhost:8080/product/get/all';
 
-  useEffect(() => {
-    console.log(user);  // log the user's username
-  }, []);
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error('Unexpected status code');
+        }
+      })
+      .then((data) => {
+        setItems(data)
+        setBrandsAndCategories();
+        
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
-  const filteredItems = catalogueItems
-  .filter(item => {
-    return (
-      (selectedCategory === "All" || item.category === selectedCategory) &&
-      (selectedBrand === "All" || item.brand === selectedBrand)
-    );
-  })
-  .sort((a, b) => {
-    if (sortType === "price-asc") {
-      return a.price - b.price;
-    } else if (sortType === "price-desc") {
-      return b.price - a.price;
-    } else if (sortType === "name") {
-      return a.name.localeCompare(b.name);
-    }
-    return 0;
-  });
+
+  
+  const setBrandsAndCategories = () => {
+    // Extract unique brands and categories from items
+    let uniqueBrands = [...new Set(items.map(item => item.brand))];
+    let uniqueCategories = [...new Set(items.map(item => item.category))];
+    setBrands(uniqueBrands);
+    setCategories(uniqueCategories);
+  }
+
+  useEffect(setBrandsAndCategories, [items]); // Add items to dependency array
+
+  useEffect(fetchProducts, [])
+
+  let filteredItems = items
+    .filter(item => {
+      return (
+        (selectedCategory === "All" || item.category === selectedCategory) &&
+        (selectedBrand === "All" || item.brand === selectedBrand)
+      );
+    })
+    .sort((a, b) => {
+      if (sortType === "price-asc") {
+        return a.price - b.price;
+      } else if (sortType === "price-desc") {
+        return b.price - a.price;
+      } else if (sortType === "name") {
+        return a.name.localeCompare(b.name);
+      }
+      return 0;
+    });
 
   const addToCart = (item) => {
     setCart([...cart, item])
@@ -86,67 +126,71 @@ export default function Home({ children }) {
     <div className="text-yellow-600">
       {/* Add sort and filter controls here */}
       <div>
-  {/* Sort controls */}
-  <label htmlFor="sort">Sort by: </label>
-  <select id="sort" onChange={e => setSortType(e.target.value)}>    <option value="price-asc">Price (Low to High)</option>
-    <option value="price-desc">Price (High to Low)</option>
-    <option value="name">Name</option>
-  </select>
+        {/* Sort controls */}
+        <label htmlFor="sort">Sort by: </label>
+        <select id="sort" onChange={e => setSortType(e.target.value)}>    <option value="price-asc">Price (Low to High)</option>
+          <option value="price-desc">Price (High to Low)</option>
+          <option value="name">Name</option>
+        </select>
 
-      {/* Filter controls */}
-      <label htmlFor="category">Filter by Category:</label>
-      <select id="category" onChange={e => setSelectedCategory(e.target.value)}>
-        <option value="All">All</option>
-        <option value="Shape">Shape</option>
-        {/* Add more categories as needed */}
-      </select>
-      
+        {/* Filter controls */}
+        <label htmlFor="category">Filter by Category:</label>
+        <select id="category" onChange={e => setSelectedCategory(e.target.value)}>
+          <option value="All">All</option>
+          {categories.map(category => (
+            <option key={category} value={category}>{category}</option>
+          ))}
+        </select>
 
-      <label htmlFor="brand">Filter by Brand:</label>
-      <select id="brand" onChange={e => setSelectedBrand(e.target.value)}>
-        <option value="All">All</option>
-        <option value="BrandA">BrandA</option>
-        <option value="BrandB">BrandB</option>
-        {/* Add more brands as needed */}
-      </select>
-  <br />
-</div>
+        <label htmlFor="brand">Filter by Brand:</label>
+        <select id="brand" onChange={e => setSelectedBrand(e.target.value)}>
+          <option value="All">All</option>
+          {brands.map(brand => (
+            <option key={brand} value={brand}>{brand}</option>
+          ))}
+        </select>
+        <br />
+      </div>
 
       <main className="flex flex-col items-center justify-start flex-1 text-center">
         <p className="mt-3 w-full md:text-2xl">Catalog</p>
+        {/* Add Fetch Products Button */}
+        <button onClick={fetchProducts} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+          Fetch Products
+        </button>
         <p className="mt-3 w-full md:text-xl">Welcome {user} </p>
         <p className="mt-3 w-full md:text-xl">You have {cart.length} items in your cart</p>
 
 
         {/* Catalogue Items */}
         <div className="flex flex-wrap justify-center gap-4 p-4">
-        {filteredItems.map((item) => (
-  <div key={item.id} className="w-64 h-64 bg-gray-200 flex flex-col items-center justify-center p-4">
-    <svg
-      width="50"
-      height="50"
-      viewBox="0 0 50 50"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {/* Use different SVG shapes based on the item name */}
-      {item.name === 'Triangle' && <path d="M25 0L50 50H0L25 0Z" fill="#C4C4C4" />}
-      {item.name === 'Circle' && <circle cx="25" cy="25" r="25" fill="#C4C4C4" />}
-      {item.name === 'Square' && <rect width="50" height="50" fill="#C4C4C4" />}
-    </svg>
-    {/* Item Information */}
-    <p className="mt-2 font-bold">{item.name}</p>
-    <p className="mt-2">Price: ${item.price}</p>
-    <p className="mt-2">Category: {item.category}</p>
-    <p className="mt-2">Brand: {item.brand}</p>
+          {filteredItems.map((item) => (
+            <div key={item.productid} className="w-64 h-64 bg-gray-200 flex flex-col items-center justify-center p-4">
+              <svg
+                width="50"
+                height="50"
+                viewBox="0 0 50 50"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                {/* Use different SVG shapes based on the item name */}
+                {item.name === 'Triangle' && <path d="M25 0L50 50H0L25 0Z" fill="#C4C4C4" />}
+                {item.name === 'Circle' && <circle cx="25" cy="25" r="25" fill="#C4C4C4" />}
+                {item.name === 'Square' && <rect width="50" height="50" fill="#C4C4C4" />}
+              </svg>
+              {/* Item Information */}
+              <p className="mt-2 font-bold">{item.name}</p>
+              <p className="mt-2">Price: ${item.price}</p>
+              <p className="mt-2">Category: {item.category}</p>
+              <p className="mt-2">Brand: {item.brand}</p>
 
-      {/* Add To Cart Button */}
-      <button onClick={() => {addToCart(item)}} className="mt-2 bg-green-500 text-white px-4 py-2 rounded">
-        Add to Cart
-      </button>
-    
-  </div>
-))}
+              {/* Add To Cart Button */}
+              <button onClick={() => { addToCart(item) }} className="mt-2 bg-green-500 text-white px-4 py-2 rounded">
+                Add to Cart
+              </button>
+
+            </div>
+          ))}
         </div>
       </main>
     </div>

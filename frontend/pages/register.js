@@ -1,10 +1,14 @@
 import React from 'react'
 import { useState } from 'react';
 
+import { useRouter } from 'next/router';
+
 const Register = () => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
+    const router = useRouter();
 
     const handleSubmit = (event) => {
       event.preventDefault();
@@ -27,13 +31,13 @@ const Register = () => {
           // rest of the code...
           if (response.status === 200) {
             alert(`User ${username} created successfully!`);
-            window.location.href = "/login";
-        } else if (response.status === 400) {
+            router.push("/login");
+          } else if (response.status === 400) {
             alert("Bad credentials");
-            window.location.reload();
+            router.reload();
         } else if (response.status === 409) {
             alert("User already exists");
-            window.location.reload();
+            router.reload();
         } else {
             throw new Error('Unexpected status code');
         }
