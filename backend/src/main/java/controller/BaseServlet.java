@@ -3,7 +3,8 @@ package controller;
 import db.UserDB;
 import org.javalite.activejdbc.Base;
 
-import javax.servlet.ServletException;
+import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -39,9 +40,22 @@ public class BaseServlet extends HttpServlet {
         req = new RequestWrapper(request);
         res = new ResponseWrapper(response);
 
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "*");
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000"); // Replace with your client's origin
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+
+        // response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000"); // Replace with your client's origin
+        // response.setHeader("Access-Control-Allow-Credentials", "true");
+        // response.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+        // response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        // // response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        // // response.setHeader("Access-Control-Allow-Credentials", "true");
 
         final String path = getRequestedPath(req.getRequestURL(), basePath);
 
@@ -85,6 +99,18 @@ public class BaseServlet extends HttpServlet {
         Base.close();
     }
 
+    protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        setAccessControlHeaders(response);
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
+
+    private void setAccessControlHeaders(HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000"); // Replace with your client's origin
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    }
+
     private void fallback() {
         res.sendError(HttpServletResponse.SC_NOT_FOUND, "Bad endpoint!");
     }
@@ -97,3 +123,5 @@ public class BaseServlet extends HttpServlet {
         return new URL(url.toString()).getPath().replace(String.format("/%s/", basePath), "");
     }
 }
+
+

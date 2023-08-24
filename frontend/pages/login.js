@@ -53,7 +53,8 @@ const Login = () => {
           headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
           },
-          body: formData.toString()
+          body: formData.toString(),
+          credentials: 'include'
       })
       .then(response => {
         if (response.status === 200) {

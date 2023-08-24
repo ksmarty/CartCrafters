@@ -17,14 +17,17 @@ const Navbar = () => {
   const { cart, setCart, user, setUser } = useContext(ShoppingCartContext);
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
 
+  const router = useRouter();
+
 
   const logout = () => {
     const url = 'http://localhost:8080/user/logout'
     fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
+      credentials: 'include'
     })
       .then(response => {
         if (response.status === 200) {
