@@ -1,5 +1,6 @@
 package controller;
 
+import db.RootDB;
 import db.UserDB;
 import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.Model;
@@ -84,7 +85,7 @@ public class BaseServlet extends HttpServlet {
             }
         }
 
-        Base.open("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:cartcrafters", "sa", "");
+        Base.open("org.hsqldb.jdbcDriver", RootDB.DB_URL, "sa", "");
         r.call();
         Base.close();
     }
