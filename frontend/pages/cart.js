@@ -63,7 +63,7 @@ const Cart = () => {
       </table>
 
       <div className="mt-4">
-        <p className="text-lg">Total Price: ${totalPrice}</p>
+        <p className="text-lg">Total Price: ${totalPrice.toFixed(2)}</p>
       </div>
 
       <div className="mt-4">
