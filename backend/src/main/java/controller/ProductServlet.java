@@ -1,8 +1,10 @@
 package controller;
 
 import com.google.gson.Gson;
-import dao.ProductDAO;
 import db.ProductDB;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
+import model.Product;
 
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Optional;
 
 import static controller.Route.ProtectedRoute.ADMIN;
 import static controller.Route.ProtectedRoute.NONE;
@@ -53,19 +56,22 @@ public class ProductServlet extends BaseServlet {
     }
 
     public void search() {
-        req.getParameter("field").ifPresentOrElse(
-                field -> req.getParameter("q").ifPresentOrElse(
-                        query -> {
-                            ProductDAO pdb = new ProductDB();
+        req.getParameter("q").ifPresentOrElse(
+                query -> {
+                    Optional<String> category = req.getParameter("category");
+                    Optional<String> brand = req.getParameter("brand");
 
-                            switch (field) {
-                                case "category" -> res.println(pdb.getFromCategory(query).toJson(true));
-                                case "brand" -> res.println(pdb.getFromBrand(query).toJson(true));
-                                default -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid field name!");
-                            }
-                        },
-                        () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Field is not present!")),
-                () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Field is not present!"));
+                    List<Product> results = FuzzySearch
+                            .extractAll(query, new ProductDB().getAll(), e -> e.getString("name"), 80)
+                            .parallelStream()
+                            .map(BoundExtractedResult::getReferent)
+                            .filter(category.isPresent() ? product -> product.getString("category").equals(category.get()) : product -> true)
+                            .filter(brand.isPresent() ? product -> product.getString("brand").equals(brand.get()) : product -> true)
+                            .toList();
+
+                    res.println(toJSON(results));
+                },
+                () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Query not present!"));
     }
 
     public void getImage() {
@@ -85,7 +91,7 @@ public class ProductServlet extends BaseServlet {
                             outputStream.write(buffer, 0, bytesRead);
                         }
                     } catch (IOException e) {
-                        res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid item number!");
+                        res.sendError(HttpServletResponse.SC_NOT_FOUND, "Requested image not found!");
                     }
                 },
                 () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Item number is not present!"));
@@ -97,6 +103,7 @@ public class ProductServlet extends BaseServlet {
                         image -> {
                             try {
                                 image.write(getServletContext().getRealPath("/storage/images/" + item + ".jpg"));
+                                res.sendResponse("Set image for product #%d successfully!", item);
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }

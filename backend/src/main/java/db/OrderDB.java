@@ -4,11 +4,9 @@ import dao.CartDAO;
 import dao.OrderDAO;
 import model.*;
 import org.javalite.activejdbc.LazyList;
-import org.javalite.activejdbc.Model;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.javalite.activejdbc.Base.withDb;
 
@@ -60,8 +58,8 @@ public class OrderDB implements OrderDAO {
     }
 
     @Override
-    public Order getUserOrder(User user, int orderId) {
-        return withDb(() -> user.get(Order.class, "orderId = ?", orderId).stream().findFirst().orElse(null));
+    public Optional<Order> getUserOrder(User user, int orderId) {
+        return withDb(() -> user.get(Order.class, "orderId = ?", orderId).stream().findFirst());
     }
 
     @Override
@@ -83,12 +81,5 @@ public class OrderDB implements OrderDAO {
     @Override
     public List<Order> getAllOrders() {
         return withDb(() -> Order.findAll().load());
-    }
-
-    @Override
-    public String toJSON(List<? extends Model> orders) {
-        return orders.stream()
-                .map(m -> m.toJson(true))
-                .collect(Collectors.joining(",", "[", "]"));
     }
 }
