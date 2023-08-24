@@ -11,7 +11,7 @@ const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const { setUser } = useContext(ShoppingCartContext);
+    const {user, setUser } = useContext(ShoppingCartContext);
 
     const router = useRouter();
 
@@ -29,6 +29,12 @@ const Login = () => {
 
       if (!password) {
         alert("Please enter a valid password!")
+        return
+      }
+
+      if (user != "guest") {
+        alert("You are already logged in!")
+        router.push('/');
         return
       }
 
