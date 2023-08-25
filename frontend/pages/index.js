@@ -236,7 +236,7 @@ export default function Home({ children }) {
         {/* Catalogue Items */}
         <div className="flex flex-wrap justify-center gap-4 p-4">
           {filteredItems.map((item) => (
-            <div key={item.productid} className="w-64 h-64 bg-gray-200 flex flex-col items-center justify-center p-4">
+            <div key={item.productid} className="w-64 h-64 bg-gray-500 flex flex-col items-center justify-center p-4">
               <svg
                 width="50"
                 height="50"
@@ -270,15 +270,15 @@ export default function Home({ children }) {
       {/* Modal Overlay */}
 {isModalOpen && (
   <Modal>
-    <h2 className="text-2xl font-bold mb-4">{selectedItem.name}</h2>
+    <h2 className="text-2xl font-bold mb-4 text-black">{selectedItem.name}</h2>
     <LazyLoadImage 
   src={"http://localhost:8080/product/get/image?item="+selectedItem.productid} 
   alt={selectedItem.name} 
   effect="blur"
   className="w-full h-64 object-cover mb-4"
-/>    <p className="mb-4">{selectedItem.description}</p>
-    <div className="flex justify-between items-center">
-      <p className="font-bold text-lg">${selectedItem.price}</p>
+/>    <p className="mb-4 text-black">{selectedItem.description}</p>
+    <div className="flex justify-between items-center text-black">
+      <p className="font-bold text-lg text-black">${selectedItem.price}</p>
       <button onClick={handleCloseModal} className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600">Close</button>
     </div>
   </Modal>
