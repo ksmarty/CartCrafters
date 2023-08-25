@@ -22,7 +22,7 @@ import {
   }
   const Transition = ({ children, location }) => {
     return (
-      <TransitionGroup style={{ position: "relative" }}>
+      <TransitionGroup className={"w-full flex flex-col flex-1"}>
         <ReactTransition
           key={location}
           timeout={{
@@ -32,6 +32,7 @@ import {
         >
           {status => (
             <div
+            className="flex flex-col flex-1"
               style={{
                 ...getTransitionStyles[status],
               }}

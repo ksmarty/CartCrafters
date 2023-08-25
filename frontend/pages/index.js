@@ -199,42 +199,52 @@ export default function Home({ children }) {
   };
 
   return ( loading ? <div>Loading...</div> :
-    <div className="text-white">
-      {/* Add sort and filter controls here */}
-      <div>
-        {/* Sort controls */}
-        <label htmlFor="sort">Sort by: </label>
-        <select id="sort" onChange={e => setSortType(e.target.value)} className='text-black'>    <option value="price-asc">Price (Low to High)</option>
-          <option value="price-desc">Price (High to Low)</option>
-          <option value="name">Name</option>
-        </select>
+    <div className="flex flex-col flex-1 text-white">
+      <main className="flex flex-col items-center justify-start flex-1 text-center pt-4">
+        {user['username'] && (
+          <p className="mt-3 md:text-xl">Welcome back {user["firstname"] || user["username"]}!</p>
+        )}
+        <p className="mt-3 md:text-xl">You have {cart.reduce((sum, item) => sum + item.quantity, 0)} items in your cart</p>
 
-        {/* Filter controls */}
-        <label htmlFor="category">Filter by Category:</label>
-        <select id="category" onChange={e => setSelectedCategory(e.target.value)} className='text-black'>
-          <option value="All">All</option>
-          {categories.map(category => (
-            <option key={category} value={category}>{category}</option>
-          ))}
-        </select>
+        <hr class="w-2/3 h-1 mx-auto my-4 bg-gray-200 border-0 rounded md:my-10 dark:bg-gray-700" />
 
-        <label htmlFor="brand">Filter by Brand:</label>
-        <select id="brand" onChange={e => setSelectedBrand(e.target.value)} className='text-black'>
-          <option value="All">All</option>
-          {brands.map(brand => (
-            <option key={brand} value={brand}>{brand}</option>
-          ))}
-        </select>
-        <br />
-      </div>
+        <p className="mb-6 md:text-2xl">Catalog</p>
 
-      <main className="flex flex-col items-center justify-start flex-1 text-center">
-        <p className="mt-3 w-full md:text-2xl">Catalog</p>
-        <p className="mt-3 w-full md:text-xl">Welcome {user["username"]} </p>
-        <p className="mt-3 w-full md:text-xl">You have {cart.reduce((sum, item) => sum + item.quantity, 0)} items in your cart</p>
+        {/* Add sort and filter controls here */}
+        <div className='flex flex-row space-x-8'>
+          {/* Sort controls */}
+          <div>
+            <label htmlFor="sort">Sort by: </label>
+            <select id="sort" onChange={e => setSortType(e.target.value)} className='text-black'>    <option value="price-asc">Price (Low to High)</option>
+              <option value="price-desc">Price (High to Low)</option>
+              <option value="name">Name</option>
+            </select>
+          </div>
 
+          {/* Filter controls */}
+          <div>
+            <label htmlFor="category">Filter by Category: </label>
+            <select id="category" onChange={e => setSelectedCategory(e.target.value)} className='text-black'>
+              <option value="All">All</option>
+              {categories.map(category => (
+                <option key={category} value={category}>{category}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="brand">Filter by Brand: </label>
+            <select id="brand" onChange={e => setSelectedBrand(e.target.value)} className='text-black'>
+              <option value="All">All</option>
+              {brands.map(brand => (
+                <option key={brand} value={brand}>{brand}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        
         {/* Catalogue Items */}
-        <div className="flex flex-wrap justify-center gap-4 p-4">
+        <div className="w-full flex flex-wrap justify-center gap-4 p-4">
           {filteredItems.map((item) => (
             <div key={item.productid} className="w-64 h-64 bg-gray-500 flex flex-col items-center justify-center p-4">
               <svg
@@ -268,21 +278,22 @@ export default function Home({ children }) {
         </div>
       </main>
       {/* Modal Overlay */}
-{isModalOpen && (
-  <Modal>
-    <h2 className="text-2xl font-bold mb-4 text-black">{selectedItem.name}</h2>
-    <LazyLoadImage 
-  src={"http://localhost:8080/product/get/image?item="+selectedItem.productid} 
-  alt={selectedItem.name} 
-  effect="blur"
-  className="w-full h-64 object-cover mb-4"
-/>    <p className="mb-4 text-black">{selectedItem.description}</p>
-    <div className="flex justify-between items-center text-black">
-      <p className="font-bold text-lg text-black">${selectedItem.price}</p>
-      <button onClick={handleCloseModal} className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600">Close</button>
-    </div>
-  </Modal>
-)}
+      {isModalOpen && (
+        <Modal>
+          <h2 className="text-2xl font-bold mb-4 text-black">{selectedItem.name}</h2>
+          <LazyLoadImage 
+            src={"http://localhost:8080/product/get/image?item="+selectedItem.productid} 
+            alt={selectedItem.name} 
+            effect="blur"
+            className="w-full h-64 object-cover mb-4"
+          />
+          <p className="mb-4 text-black">{selectedItem.description}</p>
+          <div className="flex justify-between items-center text-black">
+            <p className="font-bold text-lg text-black">${selectedItem.price}</p>
+            <button onClick={handleCloseModal} className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600">Close</button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
