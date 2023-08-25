@@ -30,9 +30,8 @@ public class UserDB implements UserDAO {
     }
 
     @Override
-    public Optional<Boolean> checkPassword(String username, String password) {
-        return getByUsername(username).map(
-                user -> SCryptUtil.check(password, user.getString("password")));
+    public Optional<User> login(String username, String password) {
+        return getByUsername(username).filter(user -> SCryptUtil.check(password, user.getString("password")));
     }
 
     @Override
