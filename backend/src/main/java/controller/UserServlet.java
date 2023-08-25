@@ -64,9 +64,9 @@ public class UserServlet extends BaseServlet {
     }
 
     private void logout() {
+        log("User %s logged out", req.getCurrentUser().getString("username"));
         req.getSession().removeAttribute("user");
         res.sendResponse("See ya!");
-        log("User %s logged out", req.getCurrentUser().getString("username"));
     }
 
     private void getDetails() {
