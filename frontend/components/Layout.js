@@ -53,8 +53,7 @@ const Navbar = () => {
       <div className="flex gap-4">
         <Link href="/" className="hover:text-gray-200">Catalog</Link>
         <Link href="/cart" className="hover:text-gray-200">Shopping Cart ({cart.length})</Link>
-        <Link href="/checkout" className="hover:text-gray-200">Checkout</Link>
-        <Link href="/register" className="hover:text-gray-200">Register</Link>
+        {user === 'guest' ? <Link href="/register" className="hover:text-gray-200">Register</Link> : ''}
         {
           user === 'admin'
             ? <Link href="/admin" className="hover:text-gray-200">Admin </Link>
