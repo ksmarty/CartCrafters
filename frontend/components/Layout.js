@@ -86,7 +86,7 @@ const Navbar = () => {
 
   }
 
-  useEffect(checkAdmin,[])  
+  useEffect(checkAdmin,[user])  
 
   return (
     <nav className="w-full p-4 flex justify-between items-center bg-blue-500 text-white">
