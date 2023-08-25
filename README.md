@@ -8,12 +8,10 @@ CartCrafters is a project developed as part of the EECS 4413 course. Our primary
 
 ## Get Started 🏁
 
-By default, the backend is not externally accessibly. To change this, add `-p 8080:8080` to docker run or uncomment the appropriate line in the compose.
-
 ### Docker CLI
 
 ```
-docker run -d -p 3000:3000 ghcr.io/ksmarty/cartcrafters:main
+docker run -d -p 3000:3000 -p 8080:8080 ghcr.io/ksmarty/cartcrafters:main
 ```
 
 ### Docker Compose
@@ -27,9 +25,9 @@ services:
     container_name: cartcrafters
     image: "ghcr.io/ksmarty/cartcrafters:main"
     ports:
-      - "80:3000"
-    #   Uncomment to access backend externally
-    #   - "8080:8080"
+      - "3000:3000"
+      - "8080:8080"
+    # - "host:container"
     restart: unless-stopped
 ```
 
@@ -50,14 +48,25 @@ services:
 Make sure the following are installed on your local development machine:
 
 - Java Development Kit 17 ([Temurin](https://adoptium.net/temurin/releases/))
+- [Maven 3.9.4](https://maven.apache.org/install.html) or later
+- [Node.js 16.14](https://nodejs.org/) or later
 
 ### Setup
 
 1. Clone this repository to your local machine using `https://github.com/ksmarty/CartCrafters.git`.
-2. Import the project into your preferred IDE. We use IntelliJ IDEA Ultimate.
-3. Install the recommended extensions for your IDE.
-4. Run the Dev configuration.
-5. Navigate to `http://localhost:8080/` in your web browser to access the application.
+2. Open `/backend` with your preferred IDE. We use IntelliJ IDEA Ultimate.
+3. Install the dependencies with `mvn clean install`.
+4. If using IntelliJ IDEA Ultimate, install the recommended extensions for your IDE & Run the `Dev` configuration.
+5. Navigate to `http://localhost:8080/` to access the backend API.
+6. Open `/frontend` with your preferred IDE. We use VSCode.
+7. Install the dependencies with `npm i` and run the frontend with `next dev`.
+8. Navigate to `http://localhost:3000/` to access the frontend.
+
+## Building Docker Images
+
+We use [nektos/act](https://github.com/nektos/act) to run our pipelines locally for testing.
+
+Run `act -s GITHUB_TOKEN=[YOUR_TOKEN]` with your github token as outlined [here](https://github.com/nektos/act#github_token).
 
 ## Contribution 🤝
 
