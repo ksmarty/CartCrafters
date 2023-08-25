@@ -6,6 +6,10 @@ const Cart = () => {
 
   const [quantityInputs, setQuantityInputs] = useState(cart.map(item => item.quantity));
 
+ // Add state for credit card and shipping address
+  const [creditCard, setCreditCard] = useState('');
+  const [shippingAddress, setShippingAddress] = useState('');
+
   const handleQuantityChange = (index, newQuantity) => {
     let newQuantityInputs = [...quantityInputs];
     newQuantityInputs[index] = newQuantity;
@@ -70,6 +74,33 @@ const Cart = () => {
       });
   }
 
+
+
+  const handleCheckout = () => {
+    const url = 'http://localhost:8080/cart/checkout';
+    const formBody = `creditCard=${encodeURIComponent(creditCard)}&shippingAddress=${encodeURIComponent(shippingAddress)}`;
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formBody,
+      credentials: 'include'
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          alert("Checkout successful!");
+        } else {
+          throw new Error('Unexpected status code');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Shopping Cart</h1>
@@ -126,13 +157,19 @@ const Cart = () => {
           ))}
         </tbody>
       </table>
-
+<div className="mt-4">
+        <label htmlFor="credit-card">Credit Card:</label>
+        <input type="text" id="credit-card" value={creditCard} onChange={(e) => setCreditCard(e.target.value)} className="ml-2 text-black" />
+      </div>
+      <div className="mt-4">
+        <label htmlFor="shipping-address">Shipping Address:</label>
+        <input type="text" id="shipping-address" value={shippingAddress} onChange={(e) => setShippingAddress(e.target.value)} className="ml-2 text-black" />
+      </div>
+      <div className="mt-4">
+        <button onClick={handleCheckout} className="bg-blue-500 text-white px-4 py-2 rounded">Checkout</button>
+      </div>
       <div className="mt-4">
         <p className="text-lg">Total Price: ${totalPrice.toFixed(2)}</p>
-      </div>
-
-      <div className="mt-4">
-        <button className="bg-blue-500 text-white px-4 py-2 rounded">Checkout</button>
       </div>
     </div>
   );
