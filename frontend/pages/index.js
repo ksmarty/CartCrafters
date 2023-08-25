@@ -199,19 +199,19 @@ export default function Home({ children }) {
   };
 
   return ( loading ? <div>Loading...</div> :
-    <div className="text-yellow-600">
+    <div className="text-white">
       {/* Add sort and filter controls here */}
       <div>
         {/* Sort controls */}
         <label htmlFor="sort">Sort by: </label>
-        <select id="sort" onChange={e => setSortType(e.target.value)}>    <option value="price-asc">Price (Low to High)</option>
+        <select id="sort" onChange={e => setSortType(e.target.value)} className='text-black'>    <option value="price-asc">Price (Low to High)</option>
           <option value="price-desc">Price (High to Low)</option>
           <option value="name">Name</option>
         </select>
 
         {/* Filter controls */}
         <label htmlFor="category">Filter by Category:</label>
-        <select id="category" onChange={e => setSelectedCategory(e.target.value)}>
+        <select id="category" onChange={e => setSelectedCategory(e.target.value)} className='text-black'>
           <option value="All">All</option>
           {categories.map(category => (
             <option key={category} value={category}>{category}</option>
@@ -219,7 +219,7 @@ export default function Home({ children }) {
         </select>
 
         <label htmlFor="brand">Filter by Brand:</label>
-        <select id="brand" onChange={e => setSelectedBrand(e.target.value)}>
+        <select id="brand" onChange={e => setSelectedBrand(e.target.value)} className='text-black'>
           <option value="All">All</option>
           {brands.map(brand => (
             <option key={brand} value={brand}>{brand}</option>
