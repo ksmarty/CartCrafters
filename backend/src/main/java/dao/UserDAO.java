@@ -15,5 +15,5 @@ public interface UserDAO {
 
     Optional<User> getByUsername(String username);
 
-    Optional<Boolean> checkPassword(String username, String password);
+    Optional<User> login(String username, String password);
 }

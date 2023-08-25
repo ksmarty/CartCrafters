@@ -14,17 +14,21 @@ public class ResponseWrapper {
         this.res = res;
     }
 
+    private void send(String key, String value) {
+        println(String.format("{\"%s\": \"%s\"}", key, value));
+    }
+
     public void sendError(int code, String message) {
         res.setStatus(code);
-        println(String.format("{\"error\": \"%s\"}", message));
+        send("error", message);
     }
 
     public void sendResponse(String message) {
-        println(String.format("{\"message\": \"%s\"}", message));
+        send("message", message);
     }
 
     public void sendResponse(String format, Object... args) {
-        printf(String.format("{\"message\": \"%s\"}", String.format(format, args)));
+        sendResponse(String.format(format, args));
     }
 
     public void println(String message) {

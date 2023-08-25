@@ -1,7 +1,9 @@
 package controller;
 
+import db.RootDB;
 import db.UserDB;
 import org.javalite.activejdbc.Base;
+import org.javalite.activejdbc.Model;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,9 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static controller.Route.ProtectedRoute.NONE;
 
@@ -69,7 +74,7 @@ public class BaseServlet extends HttpServlet {
             }
             case LOGGED_OUT -> {
                 if (req.isLoggedIn()) {
-                    res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are already logged in!");
+                    res.sendError(HttpServletResponse.SC_FORBIDDEN, "You are already logged in!");
                     return;
                 }
             }
@@ -79,12 +84,13 @@ public class BaseServlet extends HttpServlet {
                 }
             }
             case ADMIN -> {
-                if (!req.getCurrentUser().getBoolean("isAdmin")) {
-                    res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are not an admin!");
+                if (req.isLoggedOut() || !req.getCurrentUser().getBoolean("isAdmin")) {
+                    res.sendError(HttpServletResponse.SC_FORBIDDEN, "You are not an admin!");
                     return;
                 }
             }
         }
+
 
         try {
             Base.open("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:cartcrafters", "sa", "");
@@ -104,6 +110,20 @@ public class BaseServlet extends HttpServlet {
 
     public static String getRequestedPath(StringBuffer url, String basePath) throws MalformedURLException {
         return new URL(url.toString()).getPath().replace(String.format("/%s/", basePath), "");
+    }
+
+    public void log(String message) {
+        System.out.printf("[%s] %s\n", new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date()), message);
+    }
+
+    public void log(String format, Object... args) {
+        log(String.format(format, args));
+    }
+
+    public String toJSON(List<? extends Model> orders) {
+        return orders.stream()
+                .map(m -> m.toJson(true))
+                .collect(Collectors.joining(",", "[", "]"));
     }
 }
 

@@ -31,29 +31,26 @@ public class OrderServlet extends BaseServlet {
         User user = req.getCurrentUser();
         OrderDAO odb = new OrderDB();
         List<Order> orders = odb.getUserOrders(user);
-        res.println(odb.toJSON(orders));
+        res.println(toJSON(orders));
     }
 
     private void getOrderItems() {
         req.getParameterInt("order").ifPresentOrElse(
                 orderNumber -> {
                     OrderDAO odb = new OrderDB();
-                    Order order = odb.getUserOrder(req.getCurrentUser(), orderNumber);
-                    if (order == null) {
-                        res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Order does not belong to user!");
-                        return;
-                    }
-
-                    List<OrderItem> orderItems = odb.getOrderItems(order);
-                    res.println(odb.toJSON(orderItems));
+                    odb.getUserOrder(req.getCurrentUser(), orderNumber).ifPresentOrElse(
+                            order -> {
+                                List<OrderItem> orderItems = odb.getOrderItems(order);
+                                res.println(toJSON(orderItems));
+                            },
+                            () -> res.sendError(HttpServletResponse.SC_FORBIDDEN, "Order does not belong to user!"));
                 },
-                () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Order number is not valid!")
-        );
+                () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Order number is not valid!"));
     }
 
     private void getAllOrders() {
         OrderDAO odb = new OrderDB();
-        res.println(odb.toJSON(odb.getAllOrders()));
+        res.println(toJSON(odb.getAllOrders()));
     }
 
     private void getOrderItemsAdmin() {
@@ -61,8 +58,8 @@ public class OrderServlet extends BaseServlet {
                 orderNumber -> {
                     OrderDAO odb = new OrderDB();
                     odb.getOrder(orderNumber).ifPresentOrElse(
-                            order -> res.println(odb.toJSON(odb.getOrderItems(order))),
-                            () -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Order does not exist!"));
+                            order -> res.println(toJSON(odb.getOrderItems(order))),
+                            () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Order does not exist!"));
                 },
                 () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Order number is not valid!"));
     }
