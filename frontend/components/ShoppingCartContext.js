@@ -8,22 +8,32 @@ export const ShoppingCartProvider = ({ children }) => {
 
 // Fetch the cart from the server
 // Fetch the cart from the server
-const fetchCart = async () => {
-  try {
-    const response = await fetch('http://localhost:8080/cart/get');
+const fetchCart = () => {
+  const url = 'http://localhost:8080/cart/get';
 
-    if (response.ok) {
-      const text = await response.text();
-      console.log('Raw response:', text);
-      const data = JSON.parse(text);
-      setCart(data);
-    } else {
-      console.error(`HTTP error! status: ${response.status}`);
-    }
-
-  } catch (error) {
-    console.error('Error:', error);
-  }
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include'
+  })
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json();
+      } else {
+        throw new Error('Unexpected status code');
+      }
+    })
+    .then((data) => {
+      console.log(data)
+      setCart(data)
+      
+      //console.log(data);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 };
 
 
