@@ -3,6 +3,8 @@ import Link from 'next/link'
 import React, { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/router'
 
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 import Modal from '../components/Modal.js';
 
@@ -261,8 +263,12 @@ export default function Home({ children }) {
 {isModalOpen && (
   <Modal>
     <h2 className="text-2xl font-bold mb-4">{selectedItem.name}</h2>
-    <img src={"http://localhost:8080/product/get/image?item="+selectedItem.productid} alt={selectedItem.name} className="w-full h-64 object-cover mb-4"/>
-    <p className="mb-4">{selectedItem.description}</p>
+    <LazyLoadImage 
+  src={"http://localhost:8080/product/get/image?item="+selectedItem.productid} 
+  alt={selectedItem.name} 
+  effect="blur"
+  className="w-full h-64 object-cover mb-4"
+/>    <p className="mb-4">{selectedItem.description}</p>
     <div className="flex justify-between items-center">
       <p className="font-bold text-lg">${selectedItem.price}</p>
       <button onClick={handleCloseModal} className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600">Close</button>
