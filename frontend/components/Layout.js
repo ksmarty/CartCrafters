@@ -19,6 +19,8 @@ const Navbar = () => {
 
   const router = useRouter();
 
+  const [admin, setAdmin] = useState(false);
+
 
   const logout = () => {
     const url = 'http://localhost:8080/user/logout'
@@ -47,15 +49,52 @@ const Navbar = () => {
 
   }
 
+  const checkAdmin = () => {
+    const url = 'http://localhost:8080/user/details'
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      credentials: 'include'
+    })
+      .then(response => {
+        if (response.status === 200) {
+
+          return response.json()
+
+        } else if (response.status === 400 || response.status === 401) {
+
+        } else {
+          throw new Error('Unexpected status code');
+          return;
+        }
+      })
+      .then((data) => {
+        if (data) {
+          setAdmin(data["isadmin"])
+          console.log(data)
+          console.log(data["isadmin"])
+        }
+
+      })
+      .catch((error) => {
+        console.log('Error:', error);
+      });
+
+  }
+
+  useEffect(checkAdmin,[])  
+
   return (
     <nav className="w-full p-4 flex justify-between items-center bg-blue-500 text-white">
       <Link href="/" className="hover:text-gray-200"><h1 className="text-lg font-bold">CartCrafters </h1></Link>
       <div className="flex gap-4">
         <Link href="/" className="hover:text-gray-200">Catalog</Link>
-        <Link href="/cart" className="hover:text-gray-200">Shopping Cart ({cart.length})</Link>
+        <Link href="/cart" className="hover:text-gray-200">Shopping Cart ({totalItems})</Link>
         {user === 'guest' ? <Link href="/register" className="hover:text-gray-200">Register</Link> : ''}
         {
-          user === 'admin'
+          admin
             ? <Link href="/admin" className="hover:text-gray-200">Admin </Link>
             : null
         }
