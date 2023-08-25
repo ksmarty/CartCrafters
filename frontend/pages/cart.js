@@ -1,10 +1,14 @@
 import React, { useContext, useState } from 'react';
 import { ShoppingCartContext } from '../components/ShoppingCartContext.js';
 
+import { useRouter } from 'next/router.js';
+
 const Cart = () => {
   const { cart, setCart, user } = useContext(ShoppingCartContext);
 
   const [quantityInputs, setQuantityInputs] = useState(cart.map(item => item.quantity));
+
+  const router = useRouter();
 
  // Add state for credit card and shipping address
   const [creditCard, setCreditCard] = useState('');
@@ -16,6 +20,15 @@ const Cart = () => {
     setQuantityInputs(newQuantityInputs);
   }
 
+
+  const creditCardValidation = (creditCard) => {
+    const re = /^[0-9]{16}$/;
+    return re.test(creditCard);
+  };
+
+  const addressValidation = (address) => {
+    return address.trim() !== '';
+  };
 
   const updateQuantity = (index) => {
     const itemToUpdate = cart[index];
@@ -74,9 +87,49 @@ const Cart = () => {
       });
   }
 
-
+  const fetchCart = () => {
+    const url = 'http://localhost:8080/cart/get';
+  
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error('Unexpected status code');
+        }
+      })
+      .then((data) => {
+        console.log(data)
+        setCart(data)
+        
+        //console.log(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   const handleCheckout = () => {
+
+      if (cart.length === 0) {
+        alert('Your cart is empty. Please add some items before checking out.');
+        return;
+      }
+    if (!creditCardValidation(creditCard)) {
+      alert('Please enter a valid credit card number.');
+      return;
+    }
+    if (!addressValidation(shippingAddress)) {
+      alert('Please enter a valid shipping address.');
+      return;
+    }
+
     const url = 'http://localhost:8080/cart/checkout';
     const formBody = `creditCard=${encodeURIComponent(creditCard)}&shippingAddress=${encodeURIComponent(shippingAddress)}`;
 
@@ -91,6 +144,14 @@ const Cart = () => {
       .then((response) => {
         if (response.status === 200) {
           alert("Checkout successful!");
+          cart.forEach((item, index) => {
+            removeItem(index);
+          });
+                // Fetch the updated cart from the server
+      fetchCart();
+      
+      // Navigate back to the homepage
+      router.push('/');
         } else {
           throw new Error('Unexpected status code');
         }

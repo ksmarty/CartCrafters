@@ -15,6 +15,38 @@ const Login = () => {
 
     const router = useRouter();
 
+    const fetchUser = () => {
+      const url = 'http://localhost:8080/user/details'
+    
+      let error = false
+    
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json()
+        } else {
+          error = true
+          console.log('error')
+          setUser([])
+          return false;
+        }
+      })
+      .then((data) => {
+        console.log(data)
+        if (!error) {
+    
+          setUser(data)
+        }
+        
+      })
+    }
+
     const handleSubmit = (event) => {
       event.preventDefault();
 
@@ -58,15 +90,19 @@ const Login = () => {
       })
       .then(response => {
         if (response.status === 200) {
-            setUser(username);
-            alert(`User successfully logged in`);
-            router.push('/');
+          fetchUser();
+  return response.json()
         } else if (response.status === 400 || response.status === 401) {
             alert("Incorrect username and/or password");
             router.reload();
         } else {
             throw new Error('Unexpected status code');
         }
+    })
+    .then((data) => {
+      
+      alert(`User successfully logged in`);
+      router.push('/');
     })
     .catch((error) => {
         console.log('Error:', error);
