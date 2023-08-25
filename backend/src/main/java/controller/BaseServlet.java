@@ -91,9 +91,13 @@ public class BaseServlet extends HttpServlet {
             }
         }
 
-        Base.open("org.hsqldb.jdbcDriver", RootDB.DB_URL, "sa", "");
-        r.call();
-        Base.close();
+
+        try {
+            Base.open("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:cartcrafters", "sa", "");
+            r.call();
+        } finally {
+            Base.close();
+        }
     }
 
     private void fallback() {

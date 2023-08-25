@@ -4,15 +4,16 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/router'
 
 
+import Modal from '../components/Modal.js';
 
 
 import { ShoppingCartContext } from '../components/ShoppingCartContext.js';
 
 // Mock catalogue data
- let catalogueItems = [
-//   { id: 1, name: 'Triangle', price: 50, category: 'Shape', brand: 'BrandA' },
-//   { id: 2, name: 'Circle', price: 100, category: 'Shape', brand: 'BrandB' },
-//   { id: 3, name: 'Square', price: 75, category: 'Shape', brand: 'BrandA' },
+let catalogueItems = [
+  //   { id: 1, name: 'Triangle', price: 50, category: 'Shape', brand: 'BrandA' },
+  //   { id: 2, name: 'Circle', price: 100, category: 'Shape', brand: 'BrandB' },
+  //   { id: 3, name: 'Square', price: 75, category: 'Shape', brand: 'BrandA' },
   // Add more items as needed
 ];
 
@@ -29,6 +30,43 @@ export default function Home({ children }) {
   const [sortType, setSortType] = useState('price-asc');
 
   const { cart, setCart, user } = useContext(ShoppingCartContext);
+
+
+//Modal Stuff
+
+  // State for the currently selected item and whether the modal is open
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Function to open the modal and set the selected item
+  const handleOpenModal = (item) => {
+    setIsModalOpen(true);
+    setSelectedItem(item);
+  };
+
+  // Function to close the modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedItem(null);
+  };
+
+  // Add event listeners to close the modal when clicking outside of it
+  useEffect(() => {
+    const handleClose = (e) => {
+      if (e.target.id === 'modal') {
+        handleCloseModal();
+      }
+    };
+    window.addEventListener('click', handleClose);
+
+    // Clean up event listeners
+    return () => {
+      window.removeEventListener('click', handleClose);
+    };
+  }, []);
+
+//End Modal Stuff
+
 
   const fetchProducts = () => {
     const url = 'http://localhost:8080/product/get/all';
@@ -50,7 +88,7 @@ export default function Home({ children }) {
       .then((data) => {
         setItems(data)
         setBrandsAndCategories();
-        
+
         console.log(data);
       })
       .catch((error) => {
@@ -59,7 +97,7 @@ export default function Home({ children }) {
   };
 
 
-  
+
   const setBrandsAndCategories = () => {
     // Extract unique brands and categories from items
     let uniqueBrands = [...new Set(items.map(item => item.brand))];
@@ -91,8 +129,36 @@ export default function Home({ children }) {
     });
 
   const addToCart = (item) => {
-    setCart([...cart, item])
-    console.log(cart)
+    const url = 'http://localhost:8080/cart/add';
+
+    const formBody = `item=${encodeURIComponent(item.productid)}&qty=${encodeURIComponent(1)}`;
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formBody,
+      credentials: 'include'
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error('Unexpected status code');
+        }
+      })
+      .then((data) => {
+        // Assuming the server responds with the new cart data
+        // Update the cart state
+        setCart(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    // Existing code
+    console.log(cart);
   }
 
   const sortItems = (type) => {
@@ -159,8 +225,7 @@ export default function Home({ children }) {
           Fetch Products
         </button>
         <p className="mt-3 w-full md:text-xl">Welcome {user} </p>
-        <p className="mt-3 w-full md:text-xl">You have {cart.length} items in your cart</p>
-
+        <p className="mt-3 w-full md:text-xl">You have {cart.reduce((sum, item) => sum + item.quantity, 0)} items in your cart</p>
 
         {/* Catalogue Items */}
         <div className="flex flex-wrap justify-center gap-4 p-4">
@@ -188,11 +253,26 @@ export default function Home({ children }) {
               <button onClick={() => { addToCart(item) }} className="mt-2 bg-green-500 text-white px-4 py-2 rounded">
                 Add to Cart
               </button>
-
+            {/* More Details Button */}
+            <button onClick={() => { handleOpenModal(item) }} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+              More Details
+            </button>
             </div>
           ))}
         </div>
       </main>
+      {/* Modal Overlay */}
+{isModalOpen && (
+  <Modal>
+    <h2 className="text-2xl font-bold mb-4">{selectedItem.name}</h2>
+    <img src={"http://localhost:8080/product/get/image?item="+selectedItem.productid} alt={selectedItem.name} className="w-full h-64 object-cover mb-4"/>
+    <p className="mb-4">{selectedItem.description}</p>
+    <div className="flex justify-between items-center">
+      <p className="font-bold text-lg">${selectedItem.price}</p>
+      <button onClick={handleCloseModal} className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600">Close</button>
+    </div>
+  </Modal>
+)}
     </div>
   );
 }
