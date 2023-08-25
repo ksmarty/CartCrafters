@@ -100,7 +100,7 @@ const Navbar = () => {
         }
         {user === 'guest'
           ? <Link href="/login" className="hover:text-gray-200">Login </Link>
-          : <button onClick={logout} className="hover:text-gray-200">Logout {user}</button>}
+          : <button onClick={logout} className="hover:text-gray-200">Logout {user["username"]}</button>}
 
 
       </div>

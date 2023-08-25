@@ -81,11 +81,11 @@ export default function Home({ children }) {
       .then((response) => {
         if (response.status === 200) {
           return response.json();
-        } else {
-          throw new Error('Unexpected status code');
-        }
-      })
+        } 
+        return response.json();
+            })
       .then((data) => {
+        console.log(data)
         setItems(data)
         setBrandsAndCategories();
 
@@ -220,11 +220,7 @@ export default function Home({ children }) {
 
       <main className="flex flex-col items-center justify-start flex-1 text-center">
         <p className="mt-3 w-full md:text-2xl">Catalog</p>
-        {/* Add Fetch Products Button */}
-        <button onClick={fetchProducts} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
-          Fetch Products
-        </button>
-        <p className="mt-3 w-full md:text-xl">Welcome {user} </p>
+        <p className="mt-3 w-full md:text-xl">Welcome {user["username"]} </p>
         <p className="mt-3 w-full md:text-xl">You have {cart.reduce((sum, item) => sum + item.quantity, 0)} items in your cart</p>
 
         {/* Catalogue Items */}

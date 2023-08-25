@@ -36,14 +36,43 @@ const fetchCart = () => {
     });
 };
 
+const fetchUser = () => {
+  const url = 'http://localhost:8080/user/details'
+
+  let error = false
+
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include'
+  })
+  .then((response) => {
+    if (response.status === 200) {
+      return response.json()
+    } else {
+      error = true
+      console.log('error')
+      return response.json()
+    }
+  })
+  .then((data) => {
+    console.log(data)
+    if (!error) {
+
+      setUser(data)
+    }
+    
+  })
+}
 
 
   useEffect(() => {
     // Retrieve the user from local storage once the component has mounted
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
+
+    fetchUser();
+
     fetchCart();
 
 
