@@ -36,6 +36,7 @@ const Navbar = () => {
           setUser('guest');
           alert(`Successfully logged out`);
           router.push('/');
+          router.reload();
         } else if (response.status === 400 || response.status === 401) {
           alert("Not logged in!");
           router.reload();
@@ -44,7 +45,7 @@ const Navbar = () => {
         }
       })
       .catch((error) => {
-        console.log('Error:', error);
+        console.error(error)
       });
 
   }
@@ -64,22 +65,23 @@ const Navbar = () => {
           return response.json()
 
         } else if (response.status === 400 || response.status === 401) {
+          return false;
+          throw new Error('status code 400 or 401');
 
+          return;
         } else {
           throw new Error('Unexpected status code');
-          return;
         }
       })
       .then((data) => {
         if (data) {
           setAdmin(data["isadmin"])
-          console.log(data)
-          console.log(data["isadmin"])
+
         }
 
       })
       .catch((error) => {
-        console.log('Error:', error);
+        console.error(error);
       });
 
   }

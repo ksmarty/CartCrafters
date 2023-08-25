@@ -9,6 +9,7 @@
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
+    "react-lazy-load-image-component": "^1.6.0",
     "react-transition-group": "^4.4.1"
   },
   "devDependencies": {

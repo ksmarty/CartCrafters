@@ -34,6 +34,9 @@ export default function Home({ children }) {
   const { cart, setCart, user } = useContext(ShoppingCartContext);
 
 
+  // Add a loading state variable
+  const [loading, setLoading] = useState(true);
+
 //Modal Stuff
 
   // State for the currently selected item and whether the modal is open
@@ -87,11 +90,14 @@ export default function Home({ children }) {
         return response.json();
             })
       .then((data) => {
-        console.log(data)
+        //console.log(data)
         setItems(data)
         setBrandsAndCategories();
 
-        console.log(data);
+        // Set loading to false after all data is loaded
+        setLoading(false);
+
+        //console.log(data);
       })
       .catch((error) => {
         console.error(error);
@@ -147,7 +153,9 @@ export default function Home({ children }) {
         if (response.status === 200) {
           return response.json();
         } else {
+          return;
           throw new Error('Unexpected status code');
+          
         }
       })
       .then((data) => {
@@ -190,7 +198,7 @@ export default function Home({ children }) {
     setItems(newItems);
   };
 
-  return (
+  return ( loading ? <div>Loading...</div> :
     <div className="text-yellow-600">
       {/* Add sort and filter controls here */}
       <div>

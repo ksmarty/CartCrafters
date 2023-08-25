@@ -26,7 +26,7 @@ const fetchCart = () => {
       }
     })
     .then((data) => {
-      console.log(data)
+      //console.log(data)
       setCart(data)
       
       //console.log(data);
