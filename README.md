@@ -72,6 +72,14 @@ This project is licensed under the MIT License - see the LICENSE.md file for mor
 - Lev Kropp
 - Kyle Schwartz
 
-## Acknowledgments 🙏
+## Credits 🙏
 
-We extend our gratitude to our course instructor and fellow classmates for their valuable feedback and insights, contributing to the success of this project.
+T-Shirt Photo by <a href="https://unsplash.com/@anomaly?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Anomaly</a> on <a href="https://unsplash.com/photos/WWesmHEgXDs?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+
+Backpack Photo by <a href="https://unsplash.com/@jibarox?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Luis Quintero</a> on <a href="https://unsplash.com/photos/8TSqJoI-NVs?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+
+Smart Phone Photo by <a href="https://unsplash.com/@mehrshadr?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Mehrshad Rajabi</a> on <a href="https://unsplash.com/photos/cLrcbfSwBxU?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+
+Jeans Photo by <a href="https://unsplash.com/@socialcut?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">S O C I A L . C U T</a> on <a href="https://unsplash.com/photos/02NEVE2fKQw?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+
+Bluetooth Speaker Photo by <a href="https://unsplash.com/@habibdadkhah?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Habib Dadkhah</a> on <a href="https://unsplash.com/photos/zxvnrxl5OXc?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
