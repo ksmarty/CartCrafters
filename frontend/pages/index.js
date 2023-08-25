@@ -51,7 +51,7 @@ export default function Home({ children }) {
         setItems(data)
         setBrandsAndCategories();
         
-        console.log(data);
+        //console.log(data);
       })
       .catch((error) => {
         console.error(error);
@@ -90,9 +90,37 @@ export default function Home({ children }) {
       return 0;
     });
 
-  const addToCart = (item) => {
-    setCart([...cart, item])
-    console.log(cart)
+    const addToCart = (item) => {
+      const url = 'http://localhost:8080/cart/add';
+  
+      const formBody = `item=${encodeURIComponent(item.productid)}&qty=${encodeURIComponent(1)}`;
+  
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formBody,
+        credentials: 'include'
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          } else {
+            throw new Error('Unexpected status code');
+          }
+        })
+        .then((data) => {
+          // Assuming the server responds with the new cart data
+          // Update the cart state
+          setCart(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+  
+      // Existing code
+      console.log(cart);
   }
 
   const sortItems = (type) => {
