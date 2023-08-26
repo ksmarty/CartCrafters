@@ -201,7 +201,7 @@ export default function Home({ children }) {
   return ( loading ? <div>Loading...</div> :
     <div className="text-white">
       {/* Add sort and filter controls here */}
-      <div>
+      <div className='flex flex-row justify-center'>
         {/* Sort controls */}
         <label htmlFor="sort">Sort by: </label>
         <select id="sort" onChange={e => setSortType(e.target.value)} className='text-black'>    <option value="price-asc">Price (Low to High)</option>
