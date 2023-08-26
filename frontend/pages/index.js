@@ -8,6 +8,9 @@ import Modal from '../components/Modal.js';
 import { ShoppingCartContext } from '../components/ShoppingCartContext.js';
 import Image from 'next/image.js';
 
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
+
 export default function Home({ children }) {
   const router = useRouter();
   const [items, setItems] = useState([]);
@@ -204,7 +207,8 @@ export default function Home({ children }) {
         {/* Sort controls */}
         <div>
           <label htmlFor="sort">Sort by: </label>
-          <select id="sort" onChange={e => setSortType(e.target.value)} className='text-black'>    <option value="price-asc">Price (Low to High)</option>
+          <select id="sort" onChange={e => setSortType(e.target.value)} className='text-black'>
+            <option value="price-asc">Price (Low to High)</option>
             <option value="price-desc">Price (High to Low)</option>
             <option value="name">Name</option>
           </select>
@@ -237,17 +241,6 @@ export default function Home({ children }) {
         {filteredItems.map((item) => (
           <div key={item.productid} className="w-64 bg-gray-500 flex flex-col items-center justify-center p-4">
             {/* Item Information */}
-
-            <Image
-                priority={true}
-                height={256}
-                width={256}
-                src={"http://localhost:8080/product/get/image?item="+item.productid} 
-                alt={item.name} 
-                className="w-full object-cover mb-4 rounded-lg"
-                loading="eager"
-              />
-
             <p className="my-4 font-bold">{item.name}</p>
 
             <hr className="w-2/3 h-0.5 mx-auto mt-1 mb-2 bg-gray-200 border-0 rounded dark:bg-gray-700" />
@@ -271,18 +264,17 @@ export default function Home({ children }) {
             {isModalOpen && selectedItem.productid === item.productid && (
               <Modal>
                   <div className="flex space-x-8">
-                  <Image
-                    priority={true}
+                  <LazyLoadImage 
+                    src={"http://localhost:8080/product/get/image?item="+item.productid} 
+                    alt={item.name} 
+                    effect="blur"
                     height={512}
                     width={512}
-                    src={"http://localhost:8080/product/get/image?item="+item.productid}
-                    alt={item.name}
                     className="object-cover rounded-lg"
-                    loading="eager"
                   />
-                  <div className='flex flex-col justify-start'>
-                    <h2 className="text-2xl font-bold mb-4 text-black self-start">{item.name}</h2>
-                    <p className="mb-4 text-black">{item.description}</p>
+                  <div className='flex flex-col justify-start w-48'>
+                    <h2 className="text-2xl font-bold mb-4 text-black text-left">{item.name}</h2>
+                    <p className="mb-4 text-left text-black">{item.description}</p>
                     <div className="flex justify-between items-center text-black">
                       <p className="font-bold text-lg text-black">${item.price}</p>
                       <button onClick={() => { addToCart(item) }} className="mt-2 bg-green-500 text-white px-4 py-2 rounded">

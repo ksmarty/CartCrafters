@@ -120,7 +120,7 @@ const Login = () => {
         if (response.status === 200) {
           fetchUser();
           fetchCart();
-  return response.json()
+          return response.json()
         } else if (response.status === 400 || response.status === 401) {
             alert("Incorrect username and/or password");
             router.reload();

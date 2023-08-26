@@ -10,9 +10,8 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,39 +76,18 @@ public class ProductServlet extends BaseServlet {
     public void getImage() {
         req.getParameterInt("item").ifPresentOrElse(
                 item -> {
-                    String imgPath = getServletContext().getRealPath("/storage/images/" + item + ".jpg");
-                    try (FileInputStream in = new FileInputStream(imgPath);
-                         OutputStream out = res.getOutputStream()) {
-                        res.setContentType("image/jpeg");
-                        res.setContentLength((int) new File(imgPath).length());
+                    String imagePath = getServletContext().getRealPath("/storage/images/" + item + ".webp");
+                    System.out.println(imagePath);
 
-                        byte[] buffer = new byte[1024];
-                        int length;
-                        while ((length = in.read(buffer)) > 0) {
-                            out.write(buffer, 0, length);
-                        }
+                    try {
+                        File file = new File(imagePath);
+                        res.setHeader("Content-Type", getServletContext().getMimeType(imagePath));
+                        res.setHeader("Content-Length", String.valueOf(file.length()));
+                        res.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
+                        Files.copy(file.toPath(), res.getOutputStream());
                     } catch (IOException e) {
-                        e.printStackTrace();
-                        // res.sendError(HttpServletResponse.SC_NOT_FOUND, "Requested image not found!");
+                        res.sendError(HttpServletResponse.SC_NOT_FOUND, "Requested image not found!");
                     }
-
-                    // res.setContentType("image/jpeg");
-                    //
-                    // String imagePath = "/storage/images/" + item + ".jpg";
-                    // System.out.println(imagePath);
-                    //
-                    // // Read the image file from the server
-                    // try (InputStream inputStream = new FileInputStream(getServletContext().getRealPath(imagePath));
-                    //      OutputStream outputStream = res.getOutputStream()
-                    // ) {
-                    //     byte[] buffer = new byte[4096];
-                    //     int bytesRead;
-                    //     while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    //         outputStream.write(buffer, 0, bytesRead);
-                    //     }
-                    // } catch (IOException e) {
-                    //     res.sendError(HttpServletResponse.SC_NOT_FOUND, "Requested image not found!");
-                    // }
                 },
                 () -> res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Item number is not present!"));
     }
