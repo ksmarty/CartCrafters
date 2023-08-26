@@ -122,8 +122,10 @@ export default function Home({ children }) {
         return a.price - b.price;
       } else if (sortType === "price-desc") {
         return b.price - a.price;
-      } else if (sortType === "name") {
+      } else if (sortType === "name-asc") {
         return a.name.localeCompare(b.name);
+      } else if (sortType === "name-desc") {
+        return b.name.localeCompare(a.name);
       }
       return 0;
     });
@@ -210,7 +212,8 @@ export default function Home({ children }) {
           <select id="sort" onChange={e => setSortType(e.target.value)} className='text-black'>
             <option value="price-asc">Price (Low to High)</option>
             <option value="price-desc">Price (High to Low)</option>
-            <option value="name">Name</option>
+            <option value="name-asc">Name (A-Z)</option>
+            <option value="name-desc">Name (Z-A)</option>
           </select>
         </div>
 
