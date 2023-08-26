@@ -144,7 +144,7 @@ const Login = () => {
         <div className="container mx-auto p-4 max-w-md">
         <h1 className="text-3xl font-bold my-4">Login</h1>
 
-        <hr class="h-1 md:-mx-16 my-4 bg-gray-200 border-0 rounded my-10 dark:bg-gray-700" />
+        <hr className="h-1 md:-mx-16 my-4 bg-gray-200 border-0 rounded my-10 dark:bg-gray-700" />
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

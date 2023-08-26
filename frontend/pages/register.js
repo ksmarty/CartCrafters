@@ -52,7 +52,7 @@ const Register = () => {
     <div className="container mx-auto max-w-md py-4">
       <h1 className="text-3xl font-bold my-4">Register</h1>
 
-      <hr class="h-1 md:-mx-16 my-4 bg-gray-200 border-0 rounded my-10 dark:bg-gray-700" />
+      <hr className="h-1 md:-mx-16 my-4 bg-gray-200 border-0 rounded my-10 dark:bg-gray-700" />
 
       <form onSubmit={handleSubmit}>
         <div className="mb-4">

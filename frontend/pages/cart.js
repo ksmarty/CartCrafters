@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ShoppingCartContext } from '../components/ShoppingCartContext.js';
-import React, { useContext, useState } from "react";
-import { ShoppingCartContext } from "../components/ShoppingCartContext.js";
 
 import { useRouter } from 'next/router.js';
 
@@ -204,7 +202,7 @@ const Cart = () => {
     <div className="p-4 flex flex-col items-center">
       <h1 className="text-2xl font-bold my-4">Shopping Cart</h1>
 
-      <hr class="w-2/3 h-1 mx-auto my-4 bg-gray-200 border-0 rounded md:my-10 dark:bg-gray-700" />
+      <hr className="w-2/3 h-1 mx-auto my-4 bg-gray-200 border-0 rounded md:my-10 dark:bg-gray-700" />
 
       {cart.length === 0 ?
       (
@@ -290,7 +288,7 @@ const Cart = () => {
             <p className="text-lg mt-4">Total Price: ${totalPrice.toFixed(2)}</p>
           </div>
 
-          <hr class="w-2/3 h-0.5 mx-auto my-4 bg-gray-200 border-0 rounded md:my-10 dark:bg-gray-700" />
+          <hr className="w-2/3 h-0.5 mx-auto my-4 bg-gray-200 border-0 rounded md:my-10 dark:bg-gray-700" />
 
           <div className="w-2/3 flex flex-col justify-start space-y-4">
             <div className="">
@@ -303,7 +301,7 @@ const Cart = () => {
                 className="ml-2 text-black"
               />
             </div>
-            <div className="mt-4">
+            <div className="">
                 <label htmlFor="credit-card">Credit Card:</label>
                 <input
                     type="text"
@@ -313,7 +311,7 @@ const Cart = () => {
                     className="ml-2 text-black"
                 />
             </div>
-            <div className="mt-4">
+            <div className="">
                 <label htmlFor="cvv">CVV:</label>
                 <input
                     type="text"
@@ -323,7 +321,7 @@ const Cart = () => {
                     className="ml-2 text-black"
                 />
             </div>
-            <div className="mt-4">
+            <div className="">
                 <label htmlFor="expiry-month">Expiry Month:</label>
                 <input
                     type="text"
@@ -332,7 +330,7 @@ const Cart = () => {
                     className="ml-2 text-black"
                 />
             </div>
-            <div className="mt-4">
+            <div className="">
                 <label htmlFor="expiry-year">Expiry Year:</label>
                 <input
                     type="text"
