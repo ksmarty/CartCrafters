@@ -48,7 +48,6 @@ export default function Home({ children }) {
   const handleOpenModal = (item) => {
     setSelectedItem(item);
     setIsModalOpen(true);
-    console.log(item)
   };
 
   // Function to close the modal
@@ -201,62 +200,52 @@ export default function Home({ children }) {
   };
 
   return ( loading ? <div>Loading...</div> :
-    <div className="flex flex-col flex-1 text-white">
-      <main className="flex flex-col items-center justify-start flex-1 text-center pt-4">
-        {user['username'] && (
-          <p className="mt-3 md:text-xl">Welcome back {user["firstname"] || user["username"]}!</p>
-        )}
-        <p className="mt-3 md:text-xl">You have {cart.reduce((sum, item) => sum + item.quantity, 0)} items in your cart</p>
+    <div className="text-white">
+      {/* Add sort and filter controls here */}
+      <div>
+        {/* Sort controls */}
+        <label htmlFor="sort">Sort by: </label>
+        <select id="sort" onChange={e => setSortType(e.target.value)} className='text-black'>    <option value="price-asc">Price (Low to High)</option>
+          <option value="price-desc">Price (High to Low)</option>
+          <option value="name">Name</option>
+        </select>
 
-        <hr class="w-2/3 h-1 mx-auto my-4 bg-gray-200 border-0 rounded md:my-10 dark:bg-gray-700" />
+        {/* Filter controls */}
+        <label htmlFor="category">Filter by Category:</label>
+        <select id="category" onChange={e => setSelectedCategory(e.target.value)} className='text-black'>
+          <option value="All">All</option>
+          {categories.map(category => (
+            <option key={category} value={category}>{category}</option>
+          ))}
+        </select>
 
-        <p className="mb-6 md:text-2xl">Catalog</p>
+        <label htmlFor="brand">Filter by Brand:</label>
+        <select id="brand" onChange={e => setSelectedBrand(e.target.value)} className='text-black'>
+          <option value="All">All</option>
+          {brands.map(brand => (
+            <option key={brand} value={brand}>{brand}</option>
+          ))}
+        </select>
+        <br />
+      </div>
 
-        {/* Add sort and filter controls here */}
-        <div className='flex flex-row space-x-8'>
-          {/* Sort controls */}
-          <div>
-            <label htmlFor="sort">Sort by: </label>
-            <select id="sort" onChange={e => setSortType(e.target.value)} className='text-black'>    <option value="price-asc">Price (Low to High)</option>
-              <option value="price-desc">Price (High to Low)</option>
-              <option value="name">Name</option>
-            </select>
-          </div>
+      <main className="flex flex-col items-center justify-start flex-1 text-center">
+        <p className="mt-3 w-full md:text-2xl">Catalog</p>
+        <p className="mt-3 w-full md:text-xl">Welcome {user["username"]} </p>
+        <p className="mt-3 w-full md:text-xl">You have {cart.reduce((sum, item) => sum + item.quantity, 0)} items in your cart</p>
 
-          {/* Filter controls */}
-          <div>
-            <label htmlFor="category">Filter by Category: </label>
-            <select id="category" onChange={e => setSelectedCategory(e.target.value)} className='text-black'>
-              <option value="All">All</option>
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="brand">Filter by Brand: </label>
-            <select id="brand" onChange={e => setSelectedBrand(e.target.value)} className='text-black'>
-              <option value="All">All</option>
-              {brands.map(brand => (
-                <option key={brand} value={brand}>{brand}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-        
         {/* Catalogue Items */}
-        <div className="w-full flex flex-wrap justify-center gap-4 p-4">
+        <div className="flex flex-wrap justify-center gap-4 p-4">
           {filteredItems.map((item) => (
-            <div key={item.productid} className="w-64 bg-gray-500 flex flex-col items-center justify-center p-4">
+            <div key={item.productid} className="w-64 bg-gray-200 flex flex-col items-center justify-center p-4">
               {/* Item Information */}
 
               <Image
                   priority={true}
                   height={256}
                   width={256}
-                  src={"http://localhost:8080/product/get/image?item="+item.productid} 
-                  alt={item.name} 
+                  src={"http://localhost:8080/product/get/image?item="+item.productid}
+                  alt={item.name}
                   className="w-full object-cover mb-4"
                   loading="eager"
                 />
@@ -290,8 +279,8 @@ export default function Home({ children }) {
                   priority={true}
                   height={256}
                   width={256}
-                  src={"http://localhost:8080/product/get/image?item="+item.productid} 
-                  alt={item.name} 
+                  src={"http://localhost:8080/product/get/image?item="+item.productid}
+                  alt={item.name}
                   className="w-full object-cover mb-4"
                   loading="eager"
                 />
