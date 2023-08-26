@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ShoppingCartContext } from '../components/ShoppingCartContext.js';
 
 import { useRouter } from 'next/router.js';
@@ -136,6 +136,8 @@ const Cart = () => {
         console.error(error);
       });
   };
+
+  useEffect(fetchCart,[])
 
   const handleCheckout = () => {
 
