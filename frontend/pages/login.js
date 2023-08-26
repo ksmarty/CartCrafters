@@ -15,6 +15,34 @@ const Login = () => {
 
     const router = useRouter();
 
+    const fetchCart = () => {
+      const url = 'http://localhost:8080/cart/get';
+    
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          } else {
+            throw new Error('Unexpected status code');
+          }
+        })
+        .then((data) => {
+          console.log(data)
+          setCart(data)
+          
+          //console.log(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    };
+
     const fetchUser = () => {
       const url = 'http://localhost:8080/user/details'
     
@@ -91,6 +119,7 @@ const Login = () => {
       .then(response => {
         if (response.status === 200) {
           fetchUser();
+          fetchCart();
   return response.json()
         } else if (response.status === 400 || response.status === 401) {
             alert("Incorrect username and/or password");
