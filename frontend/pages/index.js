@@ -10,6 +10,7 @@ import Modal from '../components/Modal.js';
 
 
 import { ShoppingCartContext } from '../components/ShoppingCartContext.js';
+import Image from 'next/image.js';
 
 // Mock catalogue data
 let catalogueItems = [
@@ -45,8 +46,9 @@ export default function Home({ children }) {
 
   // Function to open the modal and set the selected item
   const handleOpenModal = (item) => {
-    setIsModalOpen(true);
     setSelectedItem(item);
+    setIsModalOpen(true);
+    console.log(item)
   };
 
   // Function to close the modal
@@ -246,54 +248,64 @@ export default function Home({ children }) {
         {/* Catalogue Items */}
         <div className="w-full flex flex-wrap justify-center gap-4 p-4">
           {filteredItems.map((item) => (
-            <div key={item.productid} className="w-64 h-64 bg-gray-500 flex flex-col items-center justify-center p-4">
-              <svg
-                width="50"
-                height="50"
-                viewBox="0 0 50 50"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {/* Use different SVG shapes based on the item name */}
-                {item.name === 'Triangle' && <path d="M25 0L50 50H0L25 0Z" fill="#C4C4C4" />}
-                {item.name === 'Circle' && <circle cx="25" cy="25" r="25" fill="#C4C4C4" />}
-                {item.name === 'Square' && <rect width="50" height="50" fill="#C4C4C4" />}
-              </svg>
+            <div key={item.productid} className="w-64 bg-gray-500 flex flex-col items-center justify-center p-4">
               {/* Item Information */}
-              <p className="mt-2 font-bold">{item.name}</p>
+
+              <Image
+                  priority={true}
+                  height={256}
+                  width={256}
+                  src={"http://localhost:8080/product/get/image?item="+item.productid} 
+                  alt={item.name} 
+                  className="w-full object-cover mb-4"
+                  loading="eager"
+                />
+
+              <p className="my-4 font-bold">{item.name}</p>
+
+              <hr class="w-2/3 h-0.5 mx-auto mt-1 mb-2 bg-gray-200 border-0 rounded dark:bg-gray-700" />
+
               <p className="mt-2">Price: ${item.price}</p>
               <p className="mt-2">Category: {item.category}</p>
               <p className="mt-2">Brand: {item.brand}</p>
 
-              {/* Add To Cart Button */}
-              <button onClick={() => { addToCart(item) }} className="mt-2 bg-green-500 text-white px-4 py-2 rounded">
-                Add to Cart
-              </button>
-            {/* More Details Button */}
-            <button onClick={() => { handleOpenModal(item) }} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
-              More Details
-            </button>
+              <div className='mt-6 w-full flex justify-between'>
+                {/* More Details Button */}
+                <button onClick={() => { handleOpenModal(item) }} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+                  More Details
+                </button>
+                {/* Add To Cart Button */}
+                <button onClick={() => { addToCart(item) }} className="mt-2 bg-green-500 text-white px-4 py-2 rounded">
+                  +
+                </button>
+              </div>
+
+
+
+            {/* Modal Overlay */}
+            {isModalOpen && selectedItem.productid === item.productid && (
+              <Modal>
+                <h2 className="text-2xl font-bold mb-4 text-black">{item.name}</h2>
+                <Image
+                  priority={true}
+                  height={256}
+                  width={256}
+                  src={"http://localhost:8080/product/get/image?item="+item.productid} 
+                  alt={item.name} 
+                  className="w-full object-cover mb-4"
+                  loading="eager"
+                />
+                <p className="mb-4 text-black">{item.description}</p>
+                <div className="flex justify-between items-center text-black">
+                  <p className="font-bold text-lg text-black">${item.price}</p>
+                  <button onClick={handleCloseModal} className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600">Close</button>
+                </div>
+              </Modal>
+            )}
             </div>
           ))}
         </div>
       </main>
-      {/* Modal Overlay */}
-      {isModalOpen && (
-        <Modal>
-          <h2 className="text-2xl font-bold mb-4 text-black">{selectedItem.name}</h2>
-          <LazyLoadImage 
-            src={"http://localhost:8080/product/get/image?item="+selectedItem.productid} 
-            alt={selectedItem.name} 
-            effect="blur"
-            className="w-full h-64 object-cover mb-4"
-          />
-          <p className="mb-4 text-black">{selectedItem.description}</p>
-          <div className="flex justify-between items-center text-black">
-            <p className="font-bold text-lg text-black">${selectedItem.price}</p>
-            <button onClick={handleCloseModal} className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600">Close</button>
-          </div>
-        </Modal>
-      )}
     </div>
   );
 }
