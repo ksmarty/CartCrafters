@@ -67,4 +67,8 @@ public class ResponseWrapper {
             // Shhh nothing happened dw about it
         }
     }
+
+    public void setHeader(String key, String value) {
+        res.setHeader(key, value);
+    }
 }

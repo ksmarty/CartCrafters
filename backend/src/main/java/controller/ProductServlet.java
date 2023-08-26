@@ -9,10 +9,9 @@ import model.Product;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,19 +76,15 @@ public class ProductServlet extends BaseServlet {
     public void getImage() {
         req.getParameterInt("item").ifPresentOrElse(
                 item -> {
-                    res.setContentType("image/jpeg");
+                    String imagePath = getServletContext().getRealPath("/storage/images/" + item + ".webp");
+                    System.out.println(imagePath);
 
-                    String imagePath = "/storage/images/" + item + ".jpg";
-
-                    // Read the image file from the server
-                    try (InputStream inputStream = new FileInputStream(getServletContext().getRealPath(imagePath));
-                         OutputStream outputStream = res.getOutputStream()
-                    ) {
-                        byte[] buffer = new byte[4096];
-                        int bytesRead;
-                        while ((bytesRead = inputStream.read(buffer)) != -1) {
-                            outputStream.write(buffer, 0, bytesRead);
-                        }
+                    try {
+                        File file = new File(imagePath);
+                        res.setHeader("Content-Type", getServletContext().getMimeType(imagePath));
+                        res.setHeader("Content-Length", String.valueOf(file.length()));
+                        res.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
+                        Files.copy(file.toPath(), res.getOutputStream());
                     } catch (IOException e) {
                         res.sendError(HttpServletResponse.SC_NOT_FOUND, "Requested image not found!");
                     }

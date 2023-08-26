@@ -120,7 +120,7 @@ const Login = () => {
         if (response.status === 200) {
           fetchUser();
           fetchCart();
-  return response.json()
+          return response.json()
         } else if (response.status === 400 || response.status === 401) {
             alert("Incorrect username and/or password");
             router.reload();
@@ -141,8 +141,10 @@ const Login = () => {
   };
 
       return (
-        <div className="container mx-auto max-w-md">
-        <h1 className="text-3xl font-bold mb-4">Login</h1>
+        <div className="container mx-auto p-4 max-w-md">
+        <h1 className="text-3xl font-bold my-4">Login</h1>
+
+        <hr className="h-1 md:-mx-16 my-4 bg-gray-200 border-0 rounded my-10 dark:bg-gray-700" />
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

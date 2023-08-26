@@ -130,7 +130,7 @@ const Layout = ({ children }) => {
 
         <Navbar />
         <Transition location={router.pathname}>
-          <main>{children}</main>
+          <main className='flex flex-col flex-1'>{children}</main>
 
           {router.pathname != "/" ? <Back /> : ""}
 
@@ -138,7 +138,7 @@ const Layout = ({ children }) => {
         </Transition>
 
         {/* Footer */}
-        <div className="mt-auto w-full p-4 flex justify-center items-center border-t">
+        <div className="w-full p-4 flex justify-center items-center border-t">
           <a
             className="flex items-center"
             href="https://github.com/ksmarty/CartCrafters"
