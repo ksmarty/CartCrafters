@@ -236,19 +236,8 @@ export default function Home({ children }) {
         {/* Catalogue Items */}
         <div className="flex flex-wrap justify-center gap-4 p-4">
           {filteredItems.map((item) => (
-            <div key={item.productid} className="w-64 h-64 bg-gray-200 flex flex-col items-center justify-center p-4">
-              <svg
-                width="50"
-                height="50"
-                viewBox="0 0 50 50"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {/* Use different SVG shapes based on the item name */}
-                {item.name === 'Triangle' && <path d="M25 0L50 50H0L25 0Z" fill="#C4C4C4" />}
-                {item.name === 'Circle' && <circle cx="25" cy="25" r="25" fill="#C4C4C4" />}
-                {item.name === 'Square' && <rect width="50" height="50" fill="#C4C4C4" />}
-              </svg>
+            <div key={item.productid} className="w-64 h-64 bg-gray-200 flex flex-col items-center justify-center p-4 text-black">
+
               {/* Item Information */}
               <p className="mt-2 font-bold">{item.name}</p>
               <p className="mt-2">Price: ${item.price}</p>
@@ -270,14 +259,14 @@ export default function Home({ children }) {
       {/* Modal Overlay */}
 {isModalOpen && (
   <Modal>
-    <h2 className="text-2xl font-bold mb-4">{selectedItem.name}</h2>
+    <h2 className="text-2xl font-bold mb-4 text-black">{selectedItem.name}</h2>
     <LazyLoadImage 
   src={"http://localhost:8080/product/get/image?item="+selectedItem.productid} 
   alt={selectedItem.name} 
   effect="blur"
   className="w-full h-64 object-cover mb-4"
-/>    <p className="mb-4">{selectedItem.description}</p>
-    <div className="flex justify-between items-center">
+/>    <p className="mb-4 text-black">{selectedItem.description}</p>
+    <div className="flex justify-between items-center text-black">
       <p className="font-bold text-lg">${selectedItem.price}</p>
       <button onClick={handleCloseModal} className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600">Close</button>
     </div>

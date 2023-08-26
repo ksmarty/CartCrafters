@@ -14,6 +14,28 @@ const Cart = () => {
   const [creditCard, setCreditCard] = useState('');
   const [shippingAddress, setShippingAddress] = useState('');
 
+  
+
+  // Add state for CVV and expiration date
+  const [cvv, setCvv] = useState('');
+  const [expiryMonth, setExpiryMonth] = useState('');
+  const [expiryYear, setExpiryYear] = useState('');
+  
+  // Add validation functions for CVV and expiration date
+  const cvvValidation = (cvv) => {
+    const re = /^[0-9]{3,4}$/;
+    return re.test(cvv);
+  };
+  
+  const expiryDateValidation = (month, year) => {
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1; // getMonth() returns month index starting from 0
+    if (year < currentYear || (year == currentYear && month < currentMonth)) {
+      return false;
+    }
+    return true;
+  };
+
   const handleQuantityChange = (index, newQuantity) => {
     let newQuantityInputs = [...quantityInputs];
     newQuantityInputs[index] = newQuantity;
@@ -117,6 +139,11 @@ const Cart = () => {
 
   const handleCheckout = () => {
 
+    if (user === 'guest') {
+      alert('you are not logged in! please login or register')
+      return;
+    }
+
       if (cart.length === 0) {
         alert('Your cart is empty. Please add some items before checking out.');
         return;
@@ -130,8 +157,20 @@ const Cart = () => {
       return;
     }
 
+    if (!cvvValidation(cvv)) {
+      alert('Please enter a valid CVV.');
+      return;
+    }
+    
+    if (!expiryDateValidation(expiryMonth, expiryYear)) {
+      alert('Please enter a valid expiry date.');
+      return;
+    }
+  
+
     const url = 'http://localhost:8080/cart/checkout';
-    const formBody = `creditCard=${encodeURIComponent(creditCard)}&shippingAddress=${encodeURIComponent(shippingAddress)}`;
+//    const formBody = `creditCard=${encodeURIComponent(creditCard)}&shippingAddress=${encodeURIComponent(shippingAddress)}`;
+    const formBody = `creditCard=${encodeURIComponent(creditCard)}&shippingAddress=${encodeURIComponent(shippingAddress)}&cvv=${encodeURIComponent(cvv)}&expiryMonth=${encodeURIComponent(expiryMonth)}&expiryYear=${encodeURIComponent(expiryYear)}`;
 
     fetch(url, {
       method: 'POST',
@@ -218,14 +257,32 @@ const Cart = () => {
           ))}
         </tbody>
       </table>
+<div className='flex flex-row'>
 <div className="mt-4">
         <label htmlFor="credit-card">Credit Card:</label>
         <input type="text" id="credit-card" value={creditCard} onChange={(e) => setCreditCard(e.target.value)} className="ml-2 text-black" />
       </div>
       <div className="mt-4">
+    <label htmlFor="cvv">CVV:</label>
+    <input type="text" id="cvv" value={cvv} onChange={(e) => setCvv(e.target.value)} className="ml-2 text-black" />
+  </div>
+
+
+</div>
+<div className='flex flex-row'>
+<div className="mt-4">
+    <label htmlFor="expiry-month">Expiry Month:</label>
+    <input type="text" id="expiry-month" value={expiryMonth} onChange={(e) => setExpiryMonth(e.target.value)} className="ml-2 text-black" />
+  </div>
+  <div className="mt-4">
+    <label htmlFor="expiry-year">Expiry Year:</label>
+    <input type="text" id="expiry-year" value={expiryYear} onChange={(e) => setExpiryYear(e.target.value)} className="ml-2 text-black" />
+  </div>
+</div>
+      <div className="mt-4">
         <label htmlFor="shipping-address">Shipping Address:</label>
         <input type="text" id="shipping-address" value={shippingAddress} onChange={(e) => setShippingAddress(e.target.value)} className="ml-2 text-black" />
-      </div>
+      </div> 
       <div className="mt-4">
         <button onClick={handleCheckout} className="bg-blue-500 text-white px-4 py-2 rounded">Checkout</button>
       </div>

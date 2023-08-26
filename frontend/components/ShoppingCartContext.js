@@ -58,9 +58,12 @@ const fetchUser = () => {
     }
   })
   .then((data) => {
-    console.log(data)
-    if (!error) {
-
+    console.log(data.error)
+    if (data.error) {
+      setUser('guest')
+      
+    } else {
+      
       setUser(data)
     }
     
