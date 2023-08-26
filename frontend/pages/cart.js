@@ -292,16 +292,6 @@ const Cart = () => {
 
           <div className="w-2/3 flex flex-col justify-start space-y-4">
             <div className="">
-              <label htmlFor="credit-card">Credit Card:</label>
-              <input
-                type="text"
-                id="credit-card"
-                value={creditCard}
-                onChange={(e) => setCreditCard(e.target.value)}
-                className="ml-2 text-black"
-              />
-            </div>
-            <div className="">
                 <label htmlFor="credit-card">Credit Card:</label>
                 <input
                     type="text"
